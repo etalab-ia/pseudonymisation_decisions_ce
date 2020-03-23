@@ -1,6 +1,7 @@
 # La pseudonymisation : c'est quoi ?
 
 ## À qui s'adresse ce guide?
+Modif!
 
 Ce guide s'adresse aux organismes publics, et plus particulièrement aux personnes chargées de la mise en place de la pseudonymisation des données dans ces organismes. Accessoirement, il intéressera les prestataires à qui les organismes publics demandent d'aider à mettre en place la pseudonymisation des données dans le cadre d'un marché public.
 
