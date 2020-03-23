@@ -214,7 +214,7 @@ De nombreuses librairies OpenSource permettent d'entrainer et d'utiliser des alg
  - Flair: Un framework simple pour le NLP. Flair permet d'utiliser des modèles de NLP à l'état de l'art sur des textes de tout genre, en particulier des algorithmes de reconnaissance d'entité nommées et des embeddings pré-entrainés
  - SpaCy: Un framework Python à forte capacité d'industrialisation pour le NLP. Il s'agit d'une librairie pour le NLP en Python et Cython. Il implémente les toutes dernières recherches dans le domaine du traitement du langage naturel et a été conçu pour être utilisé en production. Il possède des modèles statistiques et des embeddings pré-entrainés.
 
-Flair est la librairie que nous avons choisi pour le développement de l'outil de pseudonymisation présenté ici. 
+Flair est la librairie que nous avons choisie pour le développement de l'outil de pseudonymisation présenté ici. 
 
 
 ## Annotation
