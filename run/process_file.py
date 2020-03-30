@@ -5,6 +5,7 @@ from string import ascii_uppercase
 from flair.data import Sentence
 import dash_html_components as html
 import run.tokenization as tkz
+import itertools
 
 
 def load_text(doc_path):
@@ -87,8 +88,9 @@ def write_docx_file(text, path):
 
 def create_html_file(text, sent_tokenizer, word_tokenizer, tagger, acceptance_score=0.5):
     """ Create HMTL files for the Dash tool """
-    pseudos = ["{}...".format(letter) for letter in ascii_uppercase]
-
+    singles = ["{}...".format(letter) for letter in ascii_uppercase]
+    doubles = ["{}{}...".format(d[0], d[1]) for d in list(itertools.combinations(ascii_uppercase, 2))]
+    pseudos = singles + doubles
     sentences = tkz.tokenize_text(text, sent_tokenizer, word_tokenizer)
 
     tagged_sentences = []
@@ -147,7 +149,9 @@ def process_file(path, sent_tokenizer, word_tokenizer, tagger, acceptance_score=
     """
 
     text = load_text(path)
-    pseudos = ["{}...".format(letter) for letter in ascii_uppercase]
+    singles = ["{}...".format(letter) for letter in ascii_uppercase]
+    doubles = ["{}{}...".format(d[0], d[1]) for d in list(itertools.combinations(ascii_uppercase, 2))]
+    pseudos = singles + doubles
 
     sentences = tkz.tokenize_text(text, sent_tokenizer, word_tokenizer)
 
@@ -177,5 +181,4 @@ if __name__ == '__main__':
     tagger = SequenceTagger.load('fr-ner')
     sent_tokenizer = PunktSentenceTokenizer("nltk_data/tokenizers/punkt/french.pickle")
     path = "path_to_doc"
-    word_tokenizer = WordPunctTokenizer()
     process_file(path, sent_tokenizer, word_tokenizer, tagger, docx_path=False, CoNLL_path=False, tags=["PER"])
