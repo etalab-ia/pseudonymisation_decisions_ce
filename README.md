@@ -1,12 +1,18 @@
+# Guide pseudo (avec rmq Rose)
+
 # Introduction 
 
 ## À qui s'adresse ce guide ?
 
-Ce guide s'adresse principalement aux organismes publics, et plus particulièrement aux personnes chargées de la mise en place de la pseudonymisation des données dans ces organismes. Il pourra également intéresser d'autres acteurs faisant face à un besoin de pseudonymisation de documents textuels. 
+Ce guide s'adresse principalement aux organismes publics, et plus particulièrement aux personnes chargées de la mise en place de la pseudonymisation des données dans ces organismes. Les personnes chargées de mettre en oeuvre ces traitements peuvent être des agents publics, internes à l'administration, ou des prestataires privés. Dans ce dernier cas, les documents traités contenant des données à caractère personnel, le sous-traitant devra veiller au respect des obligations imposées par le RGPD (voir [le guide de la CNIL sur la sous-traitance des données à caractère personnel](https://www.cnil.fr/sites/default/files/atoms/files/rgpd-guide_sous-traitant-cnil.pdf)). Ce guide pourra également intéresser d'autres acteurs faisant face à un besoin de pseudonymisation de documents textuels, dans le cadre de développements de services ou de produits à partir de données à caractère personnel. 
 
 ## A quoi sert ce guide ? 
 
-Ce guide présente les différentes étapes d'un projet de pseudonymisation de documents à l'aide de méthodes d'Intelligence Artificielle. Il vient en complément d'un brique de code Open Source, hébergée sur GitHub [ici](https://github.com/etalab-ia/pseudonymisation_decisions_ce), rassemblant des outils clés en main pour entraîner un modèle de pseudonymisation et utiliser ce modèle afin d'automatiser la pseudonymisation de documents textuels. 
+
+De nombreuses administrations sont confrontées à des problèmes de pseudonymisation dès lors qu'elles ont à publiers des documents contenant des données à caractère personnel. C'est dans ce cadre qu'Etalab a développé un outil de pseudonymisation pour le Conseil d'Etat, qui publie en Open Data des décisions de justice administrative. Etalab a souhaité mutualiser les outils développés dans le cadre de cette collaboration avec le Conseil d'Etat, en publiant [une brique de code en Open Source permettant d'entraîner un modèle de pseudonymisation hébergée sur GitHub](https://github.com/etalab-ia/pseudonymisation_decisions_ce). 
+
+Ce guide présente tout d'abord dans les grandes lignes ce qu'est la pseudonymisation de documents textuels et comment l'automatiser à l'aide de méthodes d'Intelligence Artificielle. Le guide présente ensuite les étapes de sa mise en oeuvre technique, qui sont implémentées dans le code publié [ici](https://github.com/etalab-ia/pseudonymisation_decisions_ce).
+Ce guide a donc vocation à aider les administrations à automatiser le processus de pseudonymsation de documents textuels, en complément du code développé. Ce guide n'est pas un guide juridique sur la protection des données à caractère personnel ni un guide sur la sécurité des données. 
 
 
 ## Comment contribuer ?
@@ -34,11 +40,10 @@ Pour résumer, des données pseudonymisées ne sont pas tout à fait anonymes, m
 
 La [loi n°2016-1321 du 7 octobre 2016 pour une République numérique](https://www.legifrance.gouv.fr/affichLoiPubliee.do?idDocument=JORFDOLE000031589829&type=general&legislature=14)  fait de l’ouverture des données publiques la règle par défaut. Pour plus d'informations à ce sujet, vous pouvez consulter [le guide Etalab sur l'ouverture des données publiques](https://guides.etalab.gouv.fr/juridique/ouverture/#la-communication-de-vos-documents-administratifs). 
 
-Lorsque les administrations souhaitent diffuser des documents administratifs contenant des données personnelles, l'occultation préalable des éléments à caractère personnel est une obligation légale qui s’impose à elles par principe en application du Code des relations entre le public et l’administration, [CRPA article L. 312-1-2](https://www.legifrance.gouv.fr/affichCodeArticle.do?idArticle=LEGIARTI000033205514&cidTexte=LEGITEXT000031366350&dateTexte=20161009). 
+Lorsque les administrations diffusent des documents administratifs contenant des données personnelles, l'occultation préalable des éléments à caractère personnel est une obligation légale qui s’impose à elles par principe en application du Code des relations entre le public et l’administration, [CRPA article L. 312-1-2](https://www.legifrance.gouv.fr/affichCodeArticle.do?idArticle=LEGIARTI000033205514&cidTexte=LEGITEXT000031366350&dateTexte=20161009). 
 
 Pour satisfaire à cette obligation légale, la CNIL préconise d'anonymiser les documents administratifs avant de les diffuser. Néanmoins, pour les documents administratifs qui contiennent des données non structurées -- c'est-à-dire du texte libre -- une complète anonymisation, qui garantirait une parfaite impossibilité de réidentification, est difficile à atteindre et aboutirait à une perte trop grande d'informations. 
 
-La diffusion des décisions de justice, sur le site Légifrance notamment, s'opère ainsi une fois leur pseudonymisation réalisée. Voici [un exemple de décision pseudonymisée](https://www.legifrance.gouv.fr/affichJuriJudi.do?oldAction=rechJuriJudi&idTexte=JURITEXT000041701871&fastReqId=757329309&fastPos=1) sur Légifrance. 
 
 
 
@@ -46,6 +51,8 @@ La diffusion des décisions de justice, sur le site Légifrance notamment, s'op�
 
 Cela dépend du contexte réglementaire, le même cadre ne s'applique pas à tous les documents.  
 Néanmoins, il conviendra la plupart du temps de pseudonymiser toute information se rapportant à une personne physique identifiée ou identifiable. Une «personne physique identifiable» est une personne physique qui peut être identifiée, directement ou indirectement, notamment par référence à un identifiant, tel qu'un nom, un numéro d'identification, des données de localisation, un identifiant en ligne, ou à un ou plusieurs éléments spécifiques propres à son identité physique, physiologique, génétique, psychique, économique, culturelle ou sociale.
+
+Par exemple, la diffusion des décisions de justice, sur le site Légifrance notamment, s'opère une fois leur pseudonymisation réalisée. Voici [un exemple de décision pseudonymisée](https://www.legifrance.gouv.fr/affichJuriJudi.do?oldAction=rechJuriJudi&idTexte=JURITEXT000041701871&fastReqId=757329309&fastPos=1) sur Légifrance. Sont retirés notamment les noms, prénoms, adresses, dates civiles (naissance, décès, mariage) des personnes physiques. D'autres catégories d'informations, comme les noms d'entreprises, la description de faits (dates et montants d'une transaction par exemple) pourraient permettre, en les recoupant avec d'autres informations, de réidentifier une personne physique. Cependant, retirer trop de catégories d'informations reviendrait à perdre beaucoup d'informations et appauvrirait le contenu d'une décision. Il y a donc un arbitrage à faire entre la minimisation du risque de réidentification et la préservation de l'utilité des données. Trouver le bon curseur n'est pas simple et doit passer par une analyse des risques de réidentification. Le rapport du [groupe de travail du G29 sur la protection des personnes à l'égard du traitement des données à caractère personnel]( https://www.cnil.fr/sites/default/files/atoms/files/wp216_fr.pdf) présente une analyse de ces risques et d' autres exemples de risques de réidentification après pseudonymisation. 
 
 
 
@@ -75,7 +82,11 @@ Nous présentons ci-après quelques paramètres à prendre en compte pour juger 
 ### Données annotées 
 
 
-Dans le champ de l'apprentissage automatique, les modèles supervisés sont des algorithmes qui prennent en entrée des données avec des "labels" afin qu'ils "apprennent", lorsqu'on leur présente une nouvelle donnée "non-labelisée", à lui attribuer le bon label. Dans le cas de la pseudonimisation, les labels sont les catégories (nom, prénom, adresse, etc.) que l'on attribue à chaque mot d'un document. Ces catégories varient selon la nature du document et le degré de pseudonymisation souhaité. En traitement du langage naturel, ce type de tâche s'appelle la reconnaissance d'entités nommées (*named entity recognition (NER)* en anglais). Lorsqu'elle est réalisée par un humain, la tâche consistant à attribuer des labels à certains mots ou groupes de mots d'un document s'appelle l'annotation. On parlera de labélisation pour l'attribution d'un label à un mot ou à un autre élément donné, et d'annotation pour l'attribution de différents labels à des mots d'un document. Afin de constituer un ensemble de documents annotés qui va servir à entraîner un algorithme d'IA à automatiser cette tâche, il est nécessaire d'utiliser un logiciel d'annotation qui permet d'enregistrer les différentes annotations réalisées. 
+Dans le champ de l'apprentissage automatique, les modèles supervisés sont des algorithmes qui prennent en entrée des données avec des "labels" afin qu'ils "apprennent", lorsqu'on leur présente une nouvelle donnée "non-labelisée", à lui attribuer le bon label. 
+
+Dans le cas de la pseudonimisation, les labels sont les catégories (nom, prénom, adresse, etc.) que l'on attribue à chaque mot d'un document. Ces catégories varient selon la nature du document et le degré de pseudonymisation souhaité. En traitement du langage naturel, ce type de tâche s'appelle la reconnaissance d'entités nommées (*named entity recognition (NER)* en anglais). 
+
+Lorsqu'elle est réalisée par un humain, la tâche consistant à attribuer des labels à certains mots ou groupes de mots d'un document s'appelle l'annotation. On parlera de labélisation pour l'attribution d'un label à un mot ou à un autre élément donné, et d'annotation pour l'attribution de différents labels à des mots d'un document. Afin de constituer un ensemble de documents annotés qui va servir à entraîner un algorithme d'IA à automatiser cette tâche, il est nécessaire d'utiliser un logiciel d'annotation qui permet d'enregistrer les différentes annotations réalisées par les annotateurs. 
 
 Etre en mesure d'entraîner un algorithme d'IA pour pseudonymiser dépend donc de la disponibilité de documents annotés ou de la possibilité d'annoter des documents. 
 
@@ -117,7 +128,7 @@ Enfin, les données n'ayant pas été annotées vont pouvoir être pseudonymisé
 
 
 
-## L'annotation
+## Les formats de données annotées 
 
 Afin de pouvoir utiliser les données annotées pour l'entraînement d'un algorithme d'apprentissage, celles-ci doivent être converties dans un format spécifique. Dans l'exemple ci-dessous, un document textuel (ici "Thomas Clavier aime beaucoup Paris.") est alors structuré en un tableau, avec un mot par ligne, et deux colonnes, une pour le mot (ou *token*) et une pour l'annotation linguistique. 
 
@@ -231,7 +242,10 @@ Vous pouvez essayer notre démonstrateur de pseudonymisation sur http://127.0.0.
 
 
 # Ressources
+- Guide pseudonymisation ENISA : téléchargeable [ici ](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=2&cad=rja&uact=8&ved=2ahUKEwjWmpK-hcXoAhUCuRoKHa67DnAQFjABegQIAhAB&url=https%3A%2F%2Fwww.enisa.europa.eu%2Fpublications%2Fpseudonymisation-techniques-and-best-practices%2Fat_download%2FfullReport&usg=AOvVaw369BRfRk4x4swdLOzCaZFV)
+
 - Guide RGPD du développeur de la CNIL : https://www.cnil.fr/fr/guide-rgpd-du-developpeur
 - Guide de l'anonymisation de la CNIL: https://www.cnil.fr/fr/lanonymisation-des-donnees-un-traitement-cle-pour-lopen-data
+- Groupe de travail du G29 sur la protection des personnes à l'égard du traitement des données à caractère personnel: https://www.cnil.fr/sites/default/files/atoms/files/wp216_fr.pdf
 
 
