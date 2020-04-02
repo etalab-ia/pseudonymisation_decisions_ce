@@ -1,5 +1,3 @@
-# Guide pseudo (avec rmq Rose)
-
 # Introduction 
 
 ## À qui s'adresse ce guide ?
