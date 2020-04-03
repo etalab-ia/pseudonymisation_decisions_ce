@@ -2,15 +2,17 @@
 
 ## À qui s'adresse ce guide ?
 
-Ce guide s'adresse principalement **aux organismes publics**, et plus particulièrement **aux personnes chargées de la mise en place de la pseudonymisation de données à caractère personnel** dans ces organismes. Ces personnes peuvent être des agents publics, internes à l'administration, mais aussi des prestataires privés. Dans ce dernier cas, le sous-traitant devra veiller au respect des obligations imposées par le RGPD (voir [le guide de la CNIL sur la sous-traitance des données à caractère personnel](https://www.cnil.fr/sites/default/files/atoms/files/rgpd-guide_sous-traitant-cnil.pdf)). Ce guide pourra également intéresser d'autres acteurs faisant face à un besoin de pseudonymisation de documents textuels, dans le cadre de développements de services ou de produits à partir de données à caractère personnel. 
+Ce guide s'adresse principalement **aux organismes publics**, et plus particulièrement **aux personnes chargées ddu traitement et de la protection de données à caractère personnel** dans ces organismes. Ces personnes peuvent être des agents publics, internes à l'administration, mais aussi des prestataires privés. Dans ce dernier cas, le sous-traitant devra veiller au respect des obligations imposées par le RGPD (voir [le guide de la CNIL sur la sous-traitance des données à caractère personnel](https://www.cnil.fr/sites/default/files/atoms/files/rgpd-guide_sous-traitant-cnil.pdf)).
+
+Ce guide pourra également intéresser d'autres acteurs faisant face à un besoin de pseudonymisation de documents textuels, dans le cadre de développements de services ou de produits à partir de données à caractère personnel. 
 
 ## A quoi sert ce guide ? 
 
-De nombreuses administrations sont confrontées à des problèmes de pseudonymisation dès lors qu'elles ont à publier des documents textuels contenant des données à caractère personnel. C'est dans ce cadre qu'Etalab a développé un outil d'Intelligence Artificielle de pseudonymisation pour le Conseil d'État, qui publie en open data des décisions de justice administrative. Cet outil est développé de manière mutualisé et [publié en open source sur GitHub](https://github.com/etalab-ia/pseudonymisation_decisions_ce).
+De nombreuses administrations publiques sont confrontées à des problèmes de pseudonymisation dès lors qu'elles ont à publier des documents textuels contenant des données à caractère personnel. C'est dans ce cadre qu'Etalab a développé un outil d'intelligence artificielle de pseudonymisation pour le Conseil d'État, qui publie en open data des décisions de justice administrative, [de manière ouverte et mutualisée](https://github.com/etalab-ia/pseudonymisation_decisions_ce).
 
 Pour accompagner la publication de cet outil technique de pseudonymisation, nous avons pensé qu'il était nécessaire de publier également un **guide qui expose ce qu'est la pseudonymisation de documents textuels et la (possible) utilisation de l'intelligence artificielle pour la mettre en œuvre**.
 
-Dans le détail, ce guide est composé de deux parties. La première partie s'adresse à un lecteur qui souhaiterait découvrir ce qu'est la pseudonymisation, pourquoi elle est utile dans les administrations publiques, ou encore les méthodes de pseudonymisation existantes. Nous exposons en particulier dans ses grandes lignes la méthode basée sur l'IA que nous avons développée à Etalab. La seconde partie s'adresse à un public plus technique, comme des data scientists, et présente de manière plus détaillée cette approche basée sur l'IA pour fournir une compréhension détaillée de sa mise en œuvre.
+Dans le détail, ce guide est composé de deux parties. La première partie s'adresse à un lecteur qui souhaiterait **découvrir ce qu'est la pseudonymisation, pourquoi elle est utile dans les administrations publiques, ou encore les méthodes de pseudonymisation existantes**. Nous exposons en particulier dans ses grandes lignes la méthode basée sur l'IA que nous avons développée à Etalab. La seconde partie s'adresse à un public plus technique, comme des data scientists, et **présente de manière plus détaillée cette approche basée sur l'IA** pour fournir une compréhension détaillée de sa mise en œuvre.
 
 Au contraire, ce guide n'est pas un guide juridique sur la protection des données à caractère personnel, ni un guide sur la sécurité des données. 
 
@@ -22,9 +24,9 @@ Ce document est un outil évolutif et ouvert. Vous pouvez contribuer à l'améli
 
 ## Qu'est-ce que la pseudonymisation ? 
 
-### Quelles différences entre anonymisation et pseudonymisation ?
+### Quelle différence entre anonymisation et pseudonymisation ?
 
-Nous reprenons ici l'explication présentée dans le [guide de la CNIL sur l'anonymisation des données](https://www.cnil.fr/fr/lanonymisation-des-donnees-un-traitement-cle-pour-lopen-data): 
+Nous reprenons ici l'explication présentée dans le [guide de la CNIL sur l'anonymisation des données](https://www.cnil.fr/fr/lanonymisation-des-donnees-un-traitement-cle-pour-lopen-data) : 
 
 ***
 > « La pseudonymisation est un traitement de données personnelles réalisé de manière à ce qu'on ne puisse plus attribuer les données relatives à une personne physique sans avoir recours à des informations supplémentaires. En pratique **la pseudonymisation consiste à remplacer les données directement identifiantes** (nom, prénom, etc.) d’un jeu de données par des données indirectement identifiantes (alias, numéro dans un classement, etc.).
@@ -34,14 +36,13 @@ Nous reprenons ici l'explication présentée dans le [guide de la CNIL sur l'ano
 
 Pour résumer, des données pseudonymisées ne sont pas tout à fait anonymes, mais ne permettent pas non plus de réidentifier directement les personnes. La pseudonymisation a pour effet de réduire la corrélation entre les données directement identifiantes et les autres données d'une personne. 
 
-
 ### Pourquoi pseudonymiser ?
 
-La [loi n°2016-1321 pour une République numérique](https://www.legifrance.gouv.fr/affichLoiPubliee.do?idDocument=JORFDOLE000031589829&type=general&legislature=14) fait de **l’ouverture des données publiques la règle par défaut**. Pour plus d'informations à ce sujet, vous pouvez consulter [le guide Etalab sur l'ouverture des données publiques](https://guides.etalab.gouv.fr/juridique/ouverture/#la-communication-de-vos-documents-administratifs).
+La [loi n°2016-1321 pour une République numérique](https://www.legifrance.gouv.fr/affichLoiPubliee.do?idDocument=JORFDOLE000031589829&type=general&legislature=14) fait de **l’ouverture des données publiques la règle par défaut**. Etalab a d'ailleurs publié [un guide détaillé sur l'ouverture de ces données](https://guides.etalab.gouv.fr/juridique/ouverture/#la-communication-de-vos-documents-administratifs).
 
-Lorsque les administrations diffusent des documents administratifs contenant des données personnelles, **l'occultation préalable des éléments à caractère personnel est une obligation légale** qui s’impose à elles en application de l'[article L. 312-1-2](https://www.legifrance.gouv.fr/affichCodeArticle.do?idArticle=LEGIARTI000033205514&cidTexte=LEGITEXT000031366350&dateTexte=20161009)  du Code des relations entre le public et l’administration (CRPA). 
+Lorsque les administrations diffusent dans ce cadre des documents contenant des données personnelles, **l'occultation préalable des éléments à caractère personnel est une obligation légale** qui s’impose à elles en application de l'[article L. 312-1-2](https://www.legifrance.gouv.fr/affichCodeArticle.do?idArticle=LEGIARTI000033205514&cidTexte=LEGITEXT000031366350&dateTexte=20161009)  du Code des relations entre le public et l’administration (CRPA). 
 
-Pour satisfaire à cette obligation légale, la CNIL préconise d'anonymiser les documents administratifs avant de les diffuser. Néanmoins, pour les documents administratifs qui contiennent des données non structurées, c'est-à-dire du texte libre, une complète anonymisation, qui garantirait une parfaite impossibilité de réidentification, est difficile à atteindre et peut aboutir à une trop grande perte d'informations. 
+Pour satisfaire à cette obligation légale, **la CNIL préconise d'anonymiser** les documents administratifs avant de les diffuser, garantissant une parfaite impossibilité de réidentification. Néanmoins, pour les documents administratifs qui contiennent des données non structurées, en particulier du texte libre, une complète anonymisation est difficile à atteindre et peut aboutir à une trop grande perte d'informations, comme nous le verrons par la suite.
 
 ### Quelles données personnelles dois-je retirer de mon jeu de données ?
 
