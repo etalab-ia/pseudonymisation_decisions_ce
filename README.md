@@ -2,7 +2,7 @@
 
 ## À qui s'adresse ce guide ?
 
-Ce guide s'adresse principalement **aux organismes publics**, et plus particulièrement **aux personnes chargées ddu traitement et de la protection de données à caractère personnel** dans ces organismes. Ces personnes peuvent être des agents publics, internes à l'administration, mais aussi des prestataires privés. Dans ce dernier cas, le sous-traitant devra veiller au respect des obligations imposées par le RGPD (voir [le guide de la CNIL sur la sous-traitance des données à caractère personnel](https://www.cnil.fr/sites/default/files/atoms/files/rgpd-guide_sous-traitant-cnil.pdf)).
+Ce guide s'adresse principalement **aux organismes publics**, et plus particulièrement **aux personnes chargées du traitement et de la protection de données à caractère personnel** dans ces organismes. Ces personnes peuvent être des agents publics, internes à l'administration, mais aussi des prestataires privés. Dans ce dernier cas, le sous-traitant devra veiller au respect des obligations imposées par le RGPD (voir [le guide de la CNIL sur la sous-traitance des données à caractère personnel](https://www.cnil.fr/sites/default/files/atoms/files/rgpd-guide_sous-traitant-cnil.pdf)).
 
 Ce guide pourra également intéresser d'autres acteurs faisant face à un besoin de pseudonymisation de documents textuels, dans le cadre de développements de services ou de produits à partir de données à caractère personnel. 
 
@@ -12,9 +12,9 @@ De nombreuses administrations publiques sont confrontées à des problèmes de p
 
 Pour accompagner la publication de cet outil technique de pseudonymisation, nous avons pensé qu'il était nécessaire de publier également un **guide qui expose ce qu'est la pseudonymisation de documents textuels et la (possible) utilisation de l'intelligence artificielle pour la mettre en œuvre**.
 
-Dans le détail, ce guide est composé de deux parties. La première partie s'adresse à un lecteur qui souhaiterait **découvrir ce qu'est la pseudonymisation, pourquoi elle est utile dans les administrations publiques, ou encore les méthodes de pseudonymisation existantes**. Nous exposons en particulier dans ses grandes lignes la méthode basée sur l'IA que nous avons développée à Etalab. La seconde partie s'adresse à un public plus technique, comme des data scientists, et **présente de manière plus détaillée cette approche basée sur l'IA** pour fournir une compréhension détaillée de sa mise en œuvre.
+Dans le détail, ce guide est composé de trois parties. La première partie s'adresse à un lecteur qui souhaiterait **découvrir ce qu'est la pseudonymisation, pourquoi elle est utile dans les administrations publiques, ou encore les méthodes de pseudonymisation existantes**. Nous exposons dans la seconde partie une vue d'ensemble de la méthode basée sur l'IA que nous avons développée à Etalab. La troisième partie s'adresse à un public plus technique, comme des data scientists, et **présente de manière plus détaillée cette approche basée sur l'IA** pour fournir une compréhension plus précuse de sa mise en œuvre.
 
-Au contraire, ce guide n'est pas un guide juridique sur la protection des données à caractère personnel, ni un guide sur la sécurité des données. 
+Par ailleurs, ce guide n'est pas un guide juridique sur la protection des données à caractère personnel, ni un guide sur la sécurité des données. 
 
 ## Comment contribuer ?
 
@@ -73,7 +73,7 @@ Nous présentons ci-après quelques paramètres à prendre en compte pour juger 
 
 Dans le champ de l'apprentissage automatique, les modèles supervisés sont des algorithmes qui prennent en entrée des données avec des "labels" afin qu'ils "apprennent", lorsqu'on leur présente une nouvelle donnée "non-labelisée", à lui attribuer le bon label. 
 
-Dans le cas de la pseudonimisation, **les labels sont les catégories que l'on attribue à chaque mot d'un document (nom, prénom, adresse, etc.)**. Ces catégories varient selon la nature du document et le degré de pseudonymisation souhaité. En traitement du langage naturel, ce type de tâche s'appelle la reconnaissance d'entités nommées (*named entity recognition (NER)* en anglais). 
+Dans le cas de la pseudonymisation, **les labels sont les catégories que l'on attribue à chaque mot d'un document (nom, prénom, adresse, etc.)**. Ces catégories varient selon la nature du document et le degré de pseudonymisation souhaité. En traitement du langage naturel, ce type de tâche s'appelle la reconnaissance d'entités nommées (*Named Entity Recognition (NER)* en anglais). 
 
 Lorsqu'elle est réalisée par un humain, **la tâche consistant à attribuer des labels à certains mots ou groupes de mots d'un document s'appelle l'annotation**. Cette tâche pourra nécessiter des compétences spécifiques en fonction de la nature des documents et des catégories à annoter. Dans le cas le plus classique où il s'agira de reconnaître dans un texte des noms et prénoms de personnes physiques, une bonne maîtrise de la langue française est suffisante. On parlera de labélisation pour l'attribution d'un label à un unique mot, et d'annotation le processus de labélisation de l'ensemble des mots d'un document.
 
@@ -100,7 +100,7 @@ L'apprentissage de modèles de traitement automatique du langage récents, basé
 ![alt text](images/Choice_vf.svg "Logo Title Text 1")
 
 
-## Quelles sont les étapes d'un projet de pseudonymisation grâce à l'IA ?
+# Partie 2: Vue d'ensemble des étapes d'un projet de pseudonymisation grâce à l'IA
 
 ### Annoter ses données
 
@@ -131,7 +131,7 @@ La validation des performances du modèle est un double processus qui repose à 
 Une fois que vous estimez les résultats de votre algorithme convainquant, le tour est joué ! Vous pouvez maintenant lui présenter de nouveaux documents, que vous n'avez pas annoté. Si votre algorithme est bien entraîné, il sera capable de reconnaître seul le label de chaque mot. Ainsi, si vous **ajouter la règle simple de remplacer par un alias tous les mots dont le label est une donnée personnelle** (par exemple les noms par X, Y ou Z, les prénoms par A, B ou C, etc.), vous obtenez un outil de pseudonymisation automatique !
 
 
-# Partie 2 : La pseudonymisation par l'IA en pratique
+# Partie 3 : La pseudonymisation par l'IA en pratique
 
 Après avoir vu dans les grandes lignes les étapes d'un projet de pseudonymisation grâce à l'IA, nous revenons plus en détails dans cette partie sur ces différentes étapes pour présenter les choix, arbitrages et préconisations techniques que nous avons tirés de nos travaux.
 
@@ -213,18 +213,19 @@ Notre module de génération de documents pseudonymisés permet de produire en s
 
 ## Génération du document pseudonymisé
 
-Le modèle entrainé permet d'attribuer une catégorie à chaque token du document à pseudonymiser. Les sorties de l'algorithme de reconnaissance d'entités nommées ne permettent donc pas d'obtenir directement le document peudonymisé (texte original dans lequel les éléments à caractère personnel ont été remplacés par des alias). Pour le bon fonctionnement de cette étape, il est très important de fournir à l'algorithme un document tokénisé selon une méthode identique à celle utilisée pour entrainer l'algorithme.  
-Générer un document pseudonymiser nécessite de reconstruire le texte orginal à partir des sorties de l'algorithme : notre outil propose un module permettant de tester la performance de l'algorithme de reconnaissance d'entités nommées fourni nativement par Flair, ou un modèle entrainé sur des données spécifiques, et de générer des documents pseudonymisés. Le résultat est aussi visible [sur notre site](http://127.0.0.1:8050/).
+Le modèle entraîné permet d'attribuer une catégorie à chaque token du document à pseudonymiser. Les sorties de l'algorithme de reconnaissance d'entités nommées ne permettent donc pas d'obtenir directement le document peudonymisé (texte original dans lequel les éléments à caractère personnel ont été remplacés par des alias). Pour le bon fonctionnement de cette étape, il est très important de fournir à l'algorithme un document tokénisé selon une méthode identique à celle utilisée pour entraîner l'algorithme.  
+
+Générer un document pseudonymisé nécessite de reconstruire le texte orginal à partir des sorties de l'algorithme : notre outil propose un module permettant de tester la performance de l'algorithme de reconnaissance d'entités nommées fourni nativement par Flair, ou un modèle entraîné sur des données spécifiques, et de générer des documents pseudonymisés. Le résultat est aussi visible [sur notre site](http://127.0.0.1:8050/).
 
 
 ## Quelles ressources disponibles pour pseudonymiser ?
 
 ### Les librairies
 
-De nombreuses librairies OpenSource permettent d'entrainer et d'utiliser des algorithmes de reconnaissance d'entités nommées. Parmi celles-ci, [Flair](https://github.com/flairNLP/flair) et [Spacy](https://spacy.io/usage/spacy-101) présentent l'avantage de proposer des algorithmes à l'état de l'art tout en facilitant l'expérience utilisateur.
+De nombreuses librairies OpenSource permettent d'entraîner et d'utiliser des algorithmes de reconnaissance d'entités nommées. Parmi celles-ci, [Flair](https://github.com/flairNLP/flair) et [Spacy](https://spacy.io/usage/spacy-101) présentent l'avantage de proposer des algorithmes à l'état de l'art tout en facilitant l'expérience utilisateur.
 
- - Flair est un framework simple pour le NLP. Il permet d'utiliser des modèles de NLP à l'état de l'art sur des textes de tout genre, en particulier des algorithmes de reconnaissance d'entité nommées et des embeddings pré-entrainés
- - SpaCy est un framework Python à forte capacité d'industrialisation pour le NLP. Il s'agit d'une librairie pour le NLP en Python et Cython. Il implémente les toutes dernières recherches dans le domaine du traitement du langage naturel et a été conçu pour être utilisé en production. Il possède des modèles statistiques et des embeddings pré-entrainés.
+ - Flair est un framework simple pour le NLP. Il permet d'utiliser des modèles de NLP à l'état de l'art sur des textes de tout genre, en particulier des algorithmes de reconnaissance d'entité nommées et des embeddings pré-entraînés
+ - SpaCy est un framework Python à forte capacité d'industrialisation pour le NLP. Il s'agit d'une librairie pour le NLP en Python et Cython. Il implémente les toutes dernières recherches dans le domaine du traitement du langage naturel et a été conçu pour être utilisé en production. Il possède des modèles statistiques et des embeddings pré-entraînés.
 
 Flair est la librairie que nous avons choisie pour le développement de l'outil de pseudonymisation présenté ici. 
 
