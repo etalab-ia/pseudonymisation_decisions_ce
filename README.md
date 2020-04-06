@@ -247,7 +247,7 @@ Vous pouvez essayer notre démonstrateur de pseudonymisation sur http://127.0.0.
 
 
 # Ressources
-- Guide pseudonymisation ENISA : téléchargeable [ici](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=2&cad=rja&uact=8&ved=2ahUKEwjWmpK-hcXoAhUCuRoKHa67DnAQFjABegQIAhAB&url=https%3A%2F%2Fwww.enisa.europa.eu%2Fpublications%2Fpseudonymisation-techniques-and-best-practices%2Fat_download%2FfullReport&usg=AOvVaw369BRfRk4x4swdLOzCaZFV)
-- Guide RGPD du développeur de la CNIL : https://www.cnil.fr/fr/guide-rgpd-du-developpeur
-- Guide de l'anonymisation de la CNIL: https://www.cnil.fr/fr/lanonymisation-des-donnees-un-traitement-cle-pour-lopen-data
-- Groupe de travail du G29 sur la protection des personnes à l'égard du traitement des données à caractère personnel: https://www.cnil.fr/sites/default/files/atoms/files/wp216_fr.pdf
+- [Guide Pseudonymisation techniques and best practices](https://www.enisa.europa.eu/publications/pseudonymisation-techniques-and-best-practices) de l’Agence Européenne de Cybersécurité (ENISA)
+- [Guide RGPD du développeur](https://www.cnil.fr/fr/guide-rgpd-du-developpeur) de la CNIL
+- [Guide de l'anonymisation pour les données ouvertes](https://www.cnil.fr/fr/lanonymisation-des-donnees-un-traitement-cle-pour-lopen-data) de la CNIL
+- [Avis sur les techniques d’anonymisation](https://www.cnil.fr/sites/default/files/atoms/files/wp216_fr.pdf) du Groupe de travail du G29 sur la protection des personnes à l'égard du traitement des données à caractère personnel
