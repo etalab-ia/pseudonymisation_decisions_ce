@@ -1,5 +1,7 @@
 import os
 import base64
+import sys
+sys.path.append("../")
 
 from dash.dependencies import Input, Output, State
 import dash_html_components as html
