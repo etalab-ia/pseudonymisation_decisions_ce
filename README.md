@@ -13,7 +13,7 @@ De nombreuses administrations publiques sont confrontées à des problèmes de p
 Pour accompagner la publication de cet outil technique de pseudonymisation, nous avons pensé qu'il était nécessaire de publier également un **guide qui expose ce qu'est la pseudonymisation de documents textuels et la (possible) utilisation de l'intelligence artificielle pour la mettre en œuvre**.
 
 Dans le détail, ce guide est composé de trois parties :
-- La [première partie](lien) s'adresse à un lecteur qui souhaiterait **découvrir ce qu'est la pseudonymisation, pourquoi elle est utile dans les administrations publiques, ou encore les méthodes de pseudonymisation existantes**.
+- La [première partie](lien) permet de **découvrir ce qu'est la pseudonymisation, pourquoi elle est utile dans les administrations publiques**, ou encore les méthodes de pseudonymisation existantes.
 - La [deuxième partie](lien) expose une vue d'ensemble de la méthode basée sur l'IA que nous avons développée à Etalab.
 - La [troisième partie](lien) s'adresse à un public plus technique, comme des data scientists, et **présente de manière plus détaillée cette approche basée sur l'IA** pour fournir une compréhension plus précuse de sa mise en œuvre.
 
@@ -220,7 +220,6 @@ Le modèle entraîné permet d'attribuer une catégorie à chaque token du docum
 
 Générer un document pseudonymisé nécessite de reconstruire le texte orginal à partir des sorties de l'algorithme : notre outil propose un module permettant de tester la performance de l'algorithme de reconnaissance d'entités nommées fourni nativement par Flair, ou un modèle entraîné sur des données spécifiques, et de générer des documents pseudonymisés. Le résultat est aussi visible [sur notre site](http://127.0.0.1:8050/).
 
-
 ## Quelles ressources disponibles pour pseudonymiser ?
 
 ### Les librairies
@@ -232,7 +231,6 @@ De nombreuses librairies OpenSource permettent d'entraîner et d'utiliser des al
 
 Flair est la librairie que nous avons choisie pour le développement de l'outil de pseudonymisation présenté ici. 
 
-
 ### Outils d'annotation
 
 [Notre outil d'annotation](http://0.0.0.0/) est basé sur Doccano.
@@ -240,14 +238,12 @@ Flair est la librairie que nous avons choisie pour le développement de l'outil 
 Il est possible de créer rapidement un jeu de données de documents labélisés en installant Doccano. Notre outil permet de transformer simplement les données annotées via Doccano en fichiers CoNLL.
 De nombreux autres logiciels d'annotation sont disponibles, dont beaucoup sont Open Source. 
 
-
 ## Voir la pseudonymisation en action
 
-Vous pouvez essayer notre démonstrateur de pseudonymisation sur http://127.0.0.1:8050/ ou directement voir le code sur https://github.com/etalab-ia
-
+Vous pouvez directement voir le code de notre outil sur https://github.com/etalab-ia/pseudonymisation_decisions_ce.
 
 # Ressources
-- [Guide Pseudonymisation techniques and best practices](https://www.enisa.europa.eu/publications/pseudonymisation-techniques-and-best-practices) de l’Agence Européenne de Cybersécurité (ENISA)
-- [Guide RGPD du développeur](https://www.cnil.fr/fr/guide-rgpd-du-developpeur) de la CNIL
 - [Guide de l'anonymisation pour les données ouvertes](https://www.cnil.fr/fr/lanonymisation-des-donnees-un-traitement-cle-pour-lopen-data) de la CNIL
+- [Guide RGPD du développeur](https://www.cnil.fr/fr/guide-rgpd-du-developpeur) de la CNIL
 - [Avis sur les techniques d’anonymisation](https://www.cnil.fr/sites/default/files/atoms/files/wp216_fr.pdf) du Groupe de travail du G29 sur la protection des personnes à l'égard du traitement des données à caractère personnel
+- [Guide "Pseudonymisation techniques and best practices"](https://www.enisa.europa.eu/publications/pseudonymisation-techniques-and-best-practices) de l’Agence Européenne de Cybersécurité (ENISA)
