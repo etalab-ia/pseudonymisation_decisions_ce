@@ -12,9 +12,12 @@ De nombreuses administrations publiques sont confrontées à des problèmes de p
 
 Pour accompagner la publication de cet outil technique de pseudonymisation, nous avons pensé qu'il était nécessaire de publier également un **guide qui expose ce qu'est la pseudonymisation de documents textuels et la (possible) utilisation de l'intelligence artificielle pour la mettre en œuvre**.
 
-Dans le détail, ce guide est composé de trois parties. La première partie s'adresse à un lecteur qui souhaiterait **découvrir ce qu'est la pseudonymisation, pourquoi elle est utile dans les administrations publiques, ou encore les méthodes de pseudonymisation existantes**. Nous exposons dans la seconde partie une vue d'ensemble de la méthode basée sur l'IA que nous avons développée à Etalab. La troisième partie s'adresse à un public plus technique, comme des data scientists, et **présente de manière plus détaillée cette approche basée sur l'IA** pour fournir une compréhension plus précuse de sa mise en œuvre.
+Dans le détail, ce guide est composé de trois parties :
+- La [première partie](lien) s'adresse à un lecteur qui souhaiterait **découvrir ce qu'est la pseudonymisation, pourquoi elle est utile dans les administrations publiques, ou encore les méthodes de pseudonymisation existantes**.
+- La [deuxième partie](lien) expose une vue d'ensemble de la méthode basée sur l'IA que nous avons développée à Etalab.
+- La [troisième partie](lien) s'adresse à un public plus technique, comme des data scientists, et **présente de manière plus détaillée cette approche basée sur l'IA** pour fournir une compréhension plus précuse de sa mise en œuvre.
 
-Par ailleurs, ce guide n'est pas un guide juridique sur la protection des données à caractère personnel, ni un guide sur la sécurité des données. 
+> **Ce que ce guide n'est pas :** un guide juridique sur la protection des données à caractère personnel, ou un guide sur la sécurité des données. 
 
 ## Comment contribuer ?
 
@@ -42,7 +45,7 @@ La [loi n°2016-1321 pour une République numérique](https://www.legifrance.gou
 
 Lorsque les administrations diffusent dans ce cadre des documents contenant des données personnelles, **l'occultation préalable des éléments à caractère personnel est une obligation légale** qui s’impose à elles en application de l'[article L. 312-1-2](https://www.legifrance.gouv.fr/affichCodeArticle.do?idArticle=LEGIARTI000033205514&cidTexte=LEGITEXT000031366350&dateTexte=20161009)  du Code des relations entre le public et l’administration (CRPA). 
 
-Pour satisfaire à cette obligation légale, **la CNIL préconise d'anonymiser** les documents administratifs avant de les diffuser, garantissant ainsi une parfaite impossibilité de réidentification. Néanmoins, pour les documents administratifs qui contiennent des données non structurées, en particulier du texte libre, une complète anonymisation est difficile à atteindre et peut aboutir à une trop grande perte d'informations, comme nous le verrons par la suite.
+Pour satisfaire à cette obligation légale, **la CNIL préconise d'anonymiser** les documents administratifs avant de les diffuser, garantissant ainsi une parfaite impossibilité de réidentification. Néanmoins, pour les documents administratifs qui contiennent des données non structurées, en particulier du texte libre, **une complète anonymisation est difficile à atteindre et peut aboutir à une trop grande perte d'informations**, comme nous le verrons par la suite.
 
 ### Quelles données personnelles dois-je retirer de mon jeu de données ?
 
