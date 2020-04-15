@@ -3,7 +3,7 @@
 
 Après avoir vu dans les grandes lignes les étapes d'un projet de pseudonymisation grâce à l'IA, nous revenons plus en détails dans cette partie sur ces différentes étapes pour présenter les choix, arbitrages et préconisations techniques que nous avons tirés de nos travaux.
 
-## Les formats de données annotées 
+## Formater ses données annotées
 
 Afin de pouvoir utiliser les données annotées pour l'entraînement d'un algorithme d'apprentissage, **celles-ci doivent être converties dans un format spécifique**. Dans l'exemple ci-dessous, un document textuel (ici "Thomas CLAVIER aime beaucoup Paris.") est alors structuré en un tableau, avec un mot par ligne, et deux colonnes, une pour le mot (ou *token*) et une pour l'annotation linguistique. 
 
@@ -33,7 +33,7 @@ Il existe de très nombreux logiciels ou solutions d'annotation de données text
 Afin d'entraîner un algorithme supervisé, nous avons utilisé un sous-échantillon de 5000 décisions parmi les 25 000 vérifiées à la main. Nous avons sélectionné un sous-échantillon car l'échantillon complet des données vérifiées manuellement est trop important au vue des ressources de calcul dont nous disposons pour l'entraînement du modèle.  
 ***
 
-## Tokénisation
+## Tokéniser le texte
 
 Si l'on considère un document, composé de blocs de caractères, la tokénisation est la tâche qui consiste à découper ce document en éléments atomiques, en gardant ou supprimant la ponctuation. Par exemple :  
 
@@ -57,7 +57,7 @@ Les tokens correspondent généralement aux mots, mais il est important de compr
 De manière pratique, il est important de bien comprendre la méthode de tokénisation utilisée par les algorithmes, afin de prendre en compte ces choix lors de l'étape finale d'occultation d'éléments identifiants dans le texte. 
 Notre outil utilise les tokenisateurs du package **NLTK** : **WordPunctTokenizer** pour tokeniser une phrase en éléments, et **PunktSentenceTokenizer** pour découper le document en phrases (ou plus communément *sentences*, en anglais).
 
-## Apprentissage
+## Entraîner son modèle
 
 Dans le code que nous avons développé, nous utilisons la librairie Open Source [Flair](https://github.com/flairNLP/flair). 
 
@@ -67,7 +67,7 @@ L'entrainement d'un tel classificateur nécessite de choisir la valeur d'un cert
 
 Nous proposons un exemple de module permettant d'entrainer un algorithme de reconnaissance d'entités nommées via la librairie FLAIR à partir d'un corpus annoté. Enfin, pour aller plus loin, la librairie Flair propose [un module très pratique permettant de fixer les valeurs optimales des hyper-paramètres optimaux pour l'apprentissage](https://github.com/flairNLP/flair/blob/master/resources/docs/TUTORIAL_8_MODEL_OPTIMIZATION.md).
 
-## Validation
+## Valider ses résultats
 
 La validation des performances du modèle et la mise en production est un double processus reposant sur l'analyse de métriques et sur l'expérience humaine.
 
@@ -79,7 +79,7 @@ Notre module de génération de documents pseudonymisés permet de produire en s
  - Utiliser des métriques permettant de comparer, pour un document ayant été annoté manuellement, la pseudonymisation par l'algorithme à celle réalisée manuellement. On utilise généralement le [F1-score](https://fr.wikipedia.org/wiki/Pr%C3%A9cision_et_rappel) pour mesurer la performance du modèle.
  - Charger dans [notre outil d'annotation basé sur Doccano](http://0.0.0.0/) un fichier mettant en avant les différences entre les annotations provenant de sources différentes, indiquant en rouge les labels en désaccord et en vert les labels en accord.
 
-## Génération du document pseudonymisé
+## Pseudonymiser un document
 
 Le modèle entraîné permet d'attribuer une catégorie à chaque token du document à pseudonymiser. Les sorties de l'algorithme de reconnaissance d'entités nommées ne permettent donc pas d'obtenir directement le document peudonymisé (texte original dans lequel les éléments à caractère personnel ont été remplacés par des alias). Pour le bon fonctionnement de cette étape, il est très important de fournir à l'algorithme un document tokénisé selon une méthode identique à celle utilisée pour entraîner l'algorithme.  
 
