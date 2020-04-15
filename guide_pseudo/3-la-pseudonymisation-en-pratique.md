@@ -1,3 +1,4 @@
+# [EN CONSTRUCTION]
 # Partie 3 : La pseudonymisation par l'IA en pratique
 
 Après avoir vu dans les grandes lignes les étapes d'un projet de pseudonymisation grâce à l'IA, nous revenons plus en détails dans cette partie sur ces différentes étapes pour présenter les choix, arbitrages et préconisations techniques que nous avons tirés de nos travaux.
