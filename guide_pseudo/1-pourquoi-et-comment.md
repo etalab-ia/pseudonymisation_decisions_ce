@@ -80,3 +80,9 @@ Une partie des données annotées va en effet servir à apprendre à l'algorithm
 L'apprentissage de modèles de traitement automatique du langage récents, basés sur des réseaux de neurones profonds (deep learning), **nécessite des ressources dédiées et exigeantes**. D'une part, la volumétrie de données nécessaires pour l'entraînement peut mener à la constitution de corpus de plusieurs giga voire teraoctets et peut nécessiter des infrasructures de stockages dédiées, comme des serveurs de stockage. D'autre part, l'entraînement des modèles est pour sa part très gourmand en capacités de calcul, et s'appuie notamment des processeurs graphiques (*GPU* en anglais) qui permettent d'accélérer considérablement le temps de calcul. Même en disposant de GPU de dernières générations, il faut compter plusieurs jours voire plusieurs semaines pour un apprentissage complet du modèle.
 
 ![alt text](images/Choice_vf.svg "Logo Title Text 1")
+
+## Ressources externes
+- [Guide de l'anonymisation pour les données ouvertes](https://www.cnil.fr/fr/lanonymisation-des-donnees-un-traitement-cle-pour-lopen-data) de la CNIL
+- [Guide RGPD du développeur](https://www.cnil.fr/fr/guide-rgpd-du-developpeur) de la CNIL
+- [Avis sur les techniques d’anonymisation](https://www.cnil.fr/sites/default/files/atoms/files/wp216_fr.pdf) du Groupe de travail du G29 sur la protection des personnes à l'égard du traitement des données à caractère personnel
+- [Guide "Pseudonymisation techniques and best practices"](https://www.enisa.europa.eu/publications/pseudonymisation-techniques-and-best-practices) de l’Agence Européenne de Cybersécurité (ENISA)
