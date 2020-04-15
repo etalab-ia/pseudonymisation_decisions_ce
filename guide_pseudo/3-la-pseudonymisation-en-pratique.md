@@ -106,9 +106,3 @@ De nombreux autres logiciels d'annotation sont disponibles, dont beaucoup sont O
 ## Voir la pseudonymisation en action
 
 Vous pouvez directement voir le code de notre outil sur https://github.com/etalab-ia/pseudonymisation_decisions_ce.
-
-# Ressources
-- [Guide de l'anonymisation pour les données ouvertes](https://www.cnil.fr/fr/lanonymisation-des-donnees-un-traitement-cle-pour-lopen-data) de la CNIL
-- [Guide RGPD du développeur](https://www.cnil.fr/fr/guide-rgpd-du-developpeur) de la CNIL
-- [Avis sur les techniques d’anonymisation](https://www.cnil.fr/sites/default/files/atoms/files/wp216_fr.pdf) du Groupe de travail du G29 sur la protection des personnes à l'égard du traitement des données à caractère personnel
-- [Guide "Pseudonymisation techniques and best practices"](https://www.enisa.europa.eu/publications/pseudonymisation-techniques-and-best-practices) de l’Agence Européenne de Cybersécurité (ENISA)
