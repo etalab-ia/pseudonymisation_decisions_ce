@@ -108,7 +108,7 @@ def layout():
 def callbacks(_app):
     """ Define callbacks to be executed on page change"""
 
-    @_app.callback(Output('text-output', 'chil  dren'),
+    @_app.callback(Output('text-output', 'children'),
                    [Input('upload-data', 'contents'),
                     Input('upload-data', 'filename'),
                     Input('upload-data', 'last_modified')])
@@ -117,13 +117,15 @@ def callbacks(_app):
             return html.Div("Chargez un fichier dans l'onglet données pour le faire apparaitre pseudonymisé ici",
                             style={"width": "100%", "display": "flex", "align-items": "center",
                                    "justify-content": "center"})
-
+        extension = list_of_file_names.split(".")[-1]
+        temp_path = f"/tmp/output.{extension}"
         content_type, content_string = content.split(',')
         decoded = base64.b64decode(content_string)
-        f = open('/tmp/output.doc', 'wb')
+
+        f = open(temp_path, 'wb')
         f.write(decoded)
         f.close()
-        decoded = pf.load_text('/tmp/output.doc')
+        decoded = pf.load_text(temp_path)
 
         pseudo = pf.create_html_file(decoded, sent_tokenizer, word_tokenizer, tagger)
 
