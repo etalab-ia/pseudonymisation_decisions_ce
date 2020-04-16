@@ -32,16 +32,16 @@ Pour satisfaire à l'obligation d'occulation, **la CNIL préconise d'anonymiser*
 
 Un bon exemple de document administratif pseudonymisé sont les décisions de justice, diffusées notamment sur le site Légifrance. Y sont retirés notamment les noms, prénoms, adresses, dates civiles (naissance, décès, mariage) des personnes physiques. D'autres catégories d'informations, comme les noms d'entreprises, la description de faits (dates et montants d'une transaction par exemple) pourraient permettre, en les recoupant avec d'autres informations, de réidentifier une personne physique. Cependant, retirer trop de catégories d'informations reviendrait à perdre beaucoup d'informations et appauvrirait le contenu d'une décision. **Il y a donc un arbitrage à faire entre la minimisation du risque de réidentification et la préservation de l'utilité des données.** Trouver le bon curseur n'est pas simple et doit passer par une double analyse des risques de réidentification, à la fois **juridique** (pour évaluer par exemple quelles données ne doivent pas pouvoir être réidentifiées) et **technique** (pour estimer la possibilité technique de réidentifier ces données).
 
-Un rapport du [groupe de travail du G29 sur la protection des personnes à l'égard du traitement des données à caractère personnel](https://www.cnil.fr/sites/default/files/atoms/files/wp216_fr.pdf) présente une analyse intéressante des risques de réidentification après pseudonymisation, d'un point de vue juridique et technique, et des bonnes pratiques en fonction des types de données.
-
 ![Extrait de décision pseudonymisée](images/extrait_decision.PNG)
 Un extrait de décision de justice pseudonymisée
 
-:: tip Quelle quantité de données retirer ? Un exemple fictif
+::: tip Quelle quantité de données retirer ? Un exemple fictif
 Prenons l'exemple d'un extrait de décision de justice fictive : *"Monsieur Dupont est accusé d'avoir cambriolé l'établissement "Café de la Paix" à Gentioux-Pigerolles, en Creuse, situé en face de son domicile, et d'avoir dérobé la recette de la semaine évaluée à 1000€"*.
 - Cas 1 : on conserve le plus d'information possible, en supprimant néanmoins les données à caractère personel. La preudonymisation sera par exemple : *"Monsieur X. est accusé d'avoir cambriolé l'établissement "Café XXX" à Gentioux-Pigerolles, en Creuse, situé en face de son domicile, et d'avoir dérobé la recette de la semaine évaluée à 1000€"*. Le problème, c'est que s'il n'y a qu'un seul café dans ce petit village, il est très aisé de comprendre de quel établissement on parle, de sa localisation et donc celle du domicile de l'accusé, et ainsi de réidentifier ce dernier si l'on est familier du village. La pseudonymisation est donc inutile et ne protège pas suffisamment les données à caractère personnel.
 - Cas 2 : on conserve le moins d'information possible. on pourra alors obtenir la psudonymisation suivante : *"Monsieur X. est accusé d'avoir cambriolé l'établissement "XXX" à YYYY, en ZZZ, situé en face de son domicile, et d'avoir dérobé la recette de la semaine évaluée à NNNN€"*. Le problème c'est qu'il n'y a là plus beaucoup d'information utile. Par exemple, comment réaliser une cartographie du crime sans localisation ? Comment estimer les préjudices moyens des cambriolages pour un assureur ?
 :::
+
+Un rapport du [groupe de travail du G29 sur la protection des personnes à l'égard du traitement des données à caractère personnel](https://www.cnil.fr/sites/default/files/atoms/files/wp216_fr.pdf) présente une analyse détaillée des risques de réidentification après pseudonymisation, d'un point de vue juridique et technique, et des bonnes pratiques en fonction des types de données.
 
 ## Quelles sont les différentes méthodes de pseudonymisation ?
 
