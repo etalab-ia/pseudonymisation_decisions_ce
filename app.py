@@ -127,7 +127,7 @@ def callbacks(_app):
         f.close()
         decoded = pf.load_text(temp_path)
 
-        pseudo = pf.create_html_file(decoded, sent_tokenizer, word_tokenizer, tagger)
+        pseudo = pf.create_html_file(decoded, word_tokenizer, tagger)
 
         return pseudo
 
