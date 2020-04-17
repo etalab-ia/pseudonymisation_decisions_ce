@@ -1,0 +1,21 @@
+[data-entity][data-entity="Nom"] {
+ background:rgba(166,226,45,0.2);
+ border-color:#a6e22d
+}
+[data-entity][data-entity="Nom"]:after {
+ background:#a6e22d
+}
+[data-entity][data-entity="Prenom"] {
+ background:rgba(47,187,171,0.2);
+ border-color:#2fbbab
+}
+[data-entity][data-entity="Prenom"]:after {
+ background:#2fbbab
+}
+[data-entity][data-entity="Adresse"] {
+ background:rgba(224,0,132,0.2);
+ border-color:#e00084
+}
+[data-entity][data-entity="Adresse"]:after {
+ background:#e00084
+}
