@@ -4,12 +4,15 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 
-from nltk.tokenize import WordPunctTokenizer, PunktSentenceTokenizer
 from flair.models import SequenceTagger
+from sacremoses import MosesTokenizer
 
-word_tokenizer = WordPunctTokenizer()
+word_tokenizer = MosesTokenizer("fr").tokenize
 tagger = SequenceTagger.load('/home/pavel/code/pseudo_conseil_etat/models/nb_docs_datasets/1600_200_200/best-model.pt')
-sent_tokenizer = PunktSentenceTokenizer("nltk_data/tokenizers/punkt/french.pickle")
+
+
+def sent_tokenizer(text):
+    return text.split("\n")
 
 
 def app_page_layout(page_layout,
