@@ -2,13 +2,14 @@ import os
 import base64
 import sys
 
+import dash_interface.helper
+
 sys.path.append("../")
 
-from dash.dependencies import Input, Output, State
+from dash.dependencies import Input, Output
 import dash_html_components as html
 import dash_core_components as dcc
-import run.process_file as pf
-from dash_interface.helper import run_standalone_app, sent_tokenizer, word_tokenizer, tagger
+from dash_interface.helper import run_standalone_app, word_tokenizer, tagger
 
 DATAPATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')
 
@@ -125,11 +126,11 @@ def callbacks(_app):
         f = open(temp_path, 'wb')
         f.write(decoded)
         f.close()
-        decoded = pf.load_text(temp_path)
+        decoded = dash_interface.helper.load_text(temp_path)
 
-        pseudo = pf.create_html_outputs(decoded, word_tokenizer, tagger)
+        html_tagged, html_pseudoynmized = dash_interface.helper.create_html_outputs(text=decoded, tagger=tagger)
 
-        return pseudo
+        return html_tagged
 
 
 # only declare app/server if the file is being run directly

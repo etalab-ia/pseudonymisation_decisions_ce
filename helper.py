@@ -1,13 +1,21 @@
 import base64
+import copy
+import itertools
+import subprocess
+from string import ascii_uppercase
 from typing import Callable, List
 
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
-from flair.data import Token
+import textract
+from flair.data import Token, Span
 
 from flair.models import SequenceTagger
+from flair.visual.ner_html import render_ner_html
 from sacremoses import MosesTokenizer, MosesDetokenizer, MosesPunctNormalizer
+
+from dash_interface.assets.flair_viewer import colors
 
 word_tokenizer = MosesTokenizer("fr").tokenize
 tagger = SequenceTagger.load('/home/pavel/code/pseudo_conseil_etat/models/nb_docs_datasets/1600_200_200/best-model.pt')
@@ -98,6 +106,13 @@ def build_moses_tokenizer(tokenizer: MosesTokenizer,
         return tokens
 
     return tokenizer
+
+
+def flair_moses_tokenizer():
+    # TODO: Make PR with these changes
+    moses_tokenizer = MosesTokenizerSpans(lang="fr")
+    moses_tokenizer = build_moses_tokenizer(tokenizer=moses_tokenizer)
+    return moses_tokenizer
 
 
 def sent_tokenizer(text):
@@ -198,3 +213,100 @@ def run_standalone_app(
 
     # return app object
     return app
+
+
+flair_moses_tokenize = flair_moses_tokenizer()
+
+
+def render_pseudo_html(sentences, colors=None):
+    singles = [f"{letter}..." for letter in ascii_uppercase]
+    doubles = [f"{a}{b}..." for a, b in list(itertools.combinations(ascii_uppercase, 2))]
+    pseudos = singles + doubles
+    pseudo_entity_dict = {}
+
+    for id_sn, sent in enumerate(sentences):
+
+        for span in sent.get_spans("ner"):
+            if "LOC" in span.tag:
+                for id_tok in range(len(span.tokens)):
+                    span.tokens[id_tok].text = "..."
+            else:
+                pass
+                for id_tok, token in enumerate(span.tokens):
+                    replacement = pseudo_entity_dict.get(token.text.lower(), pseudos.pop(0))
+                    pseudo_entity_dict[token.text.lower()] = replacement
+                    span.tokens[id_tok].text = replacement
+                #     pseudo_tokens.append(Token(text=replacement,
+                #                                idx=token.idx,
+                #                                start_position=token.start_pos))
+                # new_span = Span(tokens=pseudo_tokens, tag=span.tag)
+
+    return render_ner_html(sentences, colors=colors)
+
+
+def create_html_outputs(text, tagger, word_tokenizer=None):
+    if not word_tokenizer:
+        tokenizer = flair_moses_tokenize
+
+    singles = ["{}...".format(letter) for letter in ascii_uppercase]
+    doubles = ["{}{}...".format(d[0], d[1]) for d in list(itertools.combinations(ascii_uppercase, 2))]
+    pseudos = singles + doubles
+
+    text = [t.strip() for t in text.split("\n") if t.strip()]
+
+    sentences_tagged = tagger.predict(sentences=text,
+                                      mini_batch_size=32,
+                                      embedding_storage_mode="cpu",
+                                      use_tokenizer=tokenizer,
+                                      verbose=True)
+
+    sentences_pseudonymized = copy.deepcopy(sentences_tagged)
+    # We create the html render for the tagged div
+    html_tagged = render_ner_html(sentences=sentences_tagged, colors=colors)
+
+    # We create the html render for the pseudonymized div
+    html_pseudoynmized = render_pseudo_html(sentences=sentences_tagged, colors=colors)
+
+
+    return html_tagged, html_pseudoynmized
+
+
+def file2txt(doc_path: str):
+    if doc_path.endswith("doc"):
+        result = subprocess.run(['antiword', '-w', '0', doc_path], stdout=subprocess.PIPE)
+        result = result.stdout.decode("utf-8").replace("|", "\t")
+    else:
+        result = textract.process(doc_path, encoding='utf-8').decode("utf8").replace("|", "\t")
+    return result
+
+
+def load_text(doc_path):
+    return file2txt(doc_path)
+
+
+def build_pseudonymisation_map_flair(sentences, pseudos, acceptance_score, tags="all"):
+    """
+    Gets all replacements to be made in pseudonymized text using flair tagged sentences
+
+    :param sentences: list of tuples (flair tagged sentences, original)
+    :param pseudos: list of pseudos to be used
+    :param acceptance_score: minimum confidence score to accept NER tag
+    :return: dict: keys are spans in sentence, values are pseudos
+    """
+
+    replacements = {}
+    mapping = {}
+    for sentence in sentences:
+        for token in sentence:
+            entity = token.get_tag("ner").value
+            if entity != 'O' and (entity in tags or tags == "all"):
+                entity = entity[2:]
+                if "LOC" not in entity:
+                    if token.text.lower() not in mapping:
+                        mapping[token.text.lower()] = pseudos.pop(0)
+
+                    replacements[sentence[token.idx - 1]] = mapping[token.text.lower()]
+                else:
+                    replacements[sentence[token.idx - 1]] = "..."
+
+    return replacements
