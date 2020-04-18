@@ -1,14 +1,103 @@
 import base64
+from typing import Callable, List
 
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
+from flair.data import Token
 
 from flair.models import SequenceTagger
-from sacremoses import MosesTokenizer
+from sacremoses import MosesTokenizer, MosesDetokenizer, MosesPunctNormalizer
 
 word_tokenizer = MosesTokenizer("fr").tokenize
 tagger = SequenceTagger.load('/home/pavel/code/pseudo_conseil_etat/models/nb_docs_datasets/1600_200_200/best-model.pt')
+
+
+class MosesTokenizerSpans(MosesTokenizer):
+    def __init__(self, lang="en", custom_nonbreaking_prefixes_file=None):
+        # Initialize the object.
+        MosesTokenizer.__init__(self, lang=lang,
+                                custom_nonbreaking_prefixes_file=custom_nonbreaking_prefixes_file)
+        self.lang = lang
+
+    def span_tokenize(
+            self,
+            text,
+            aggressive_dash_splits=False,
+            return_str=False,
+            escape=True,
+            protected_patterns=None,
+    ):
+        # https://stackoverflow.com/a/35634472
+        import re
+        detokenizer = MosesDetokenizer(lang=self.lang)
+        tokens = self.tokenize(text=text, aggressive_dash_splits=aggressive_dash_splits,
+                               return_str=return_str, escape=escape,
+                               protected_patterns=protected_patterns)
+        tail = text
+        accum = 0
+        tokens_spans = []
+        for token in tokens:
+            escaped_token = re.escape(token)
+            detokenized_token = detokenizer.detokenize(tokens=[escaped_token],
+                                                       return_str=return_str,
+                                                       unescape=escape)[0]
+            m = re.search(detokenized_token, tail)
+            tok_start_pos, tok_end_pos = m.span()
+            sent_start_pos = accum + tok_start_pos
+            sent_end_pos = accum + tok_end_pos
+            accum += tok_end_pos
+            tail = tail[tok_end_pos:]
+            tokens_spans.append((token, (sent_start_pos, sent_end_pos)))
+        return tokens_spans
+
+
+def build_moses_tokenizer(tokenizer: MosesTokenizer,
+                          normalizer: MosesPunctNormalizer = None) -> Callable[[str], List[Token]]:
+    """
+    Wrap Spacy model to build a tokenizer for the Sentence class.
+    :param model a Spacy V2 model
+    :return a tokenizer function to provide to Sentence class constructor
+    """
+    try:
+        pass
+        from sacremoses import MosesTokenizer
+        from sacremoses import MosesPunctNormalizer
+        # from spacy.language import Language
+        # from spacy.tokens.doc import Doc
+        # from spacy.tokens.token import Token as SpacyToken
+    except ImportError:
+        raise ImportError(
+            "Please install sacremoses or better before using the Spacy tokenizer, otherwise you can use segtok_tokenizer as advanced tokenizer."
+        )
+
+    moses_tokenizer: MosesTokenizerSpans = tokenizer
+    if normalizer:
+        normalizer: MosesPunctNormalizer = normalizer
+
+    def tokenizer(text: str) -> List[Token]:
+        if normalizer:
+            text = normalizer.normalize(text=text)
+        doc = moses_tokenizer.span_tokenize(text=text)
+        previous_token = None
+        tokens: List[Token] = []
+        for word, (start_pos, end_pos) in doc:
+            word: str = word
+            token = Token(
+                text=word, start_position=start_pos, whitespace_after=True
+            )
+            tokens.append(token)
+
+            if (previous_token is not None) and (
+                    token.start_pos - 1
+                    == previous_token.start_pos + len(previous_token.text)
+            ):
+                previous_token.whitespace_after = False
+
+            previous_token = token
+        return tokens
+
+    return tokenizer
 
 
 def sent_tokenizer(text):
