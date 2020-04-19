@@ -6,16 +6,14 @@ from string import ascii_uppercase
 from typing import Callable, List
 
 import dash
+import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_html_components as html
 import textract
 from flair.data import Token, Span
 
 from flair.models import SequenceTagger
-from flair.visual.ner_html import render_ner_html
 from sacremoses import MosesTokenizer, MosesDetokenizer, MosesPunctNormalizer
-
-from dash_interface.assets.flair_viewer import colors
 
 word_tokenizer = MosesTokenizer("fr").tokenize
 tagger = SequenceTagger.load('/home/pavel/code/pseudo_conseil_etat/models/nb_docs_datasets/1600_200_200/best-model.pt')
@@ -23,7 +21,6 @@ tagger = SequenceTagger.load('/home/pavel/code/pseudo_conseil_etat/models/nb_doc
 
 class MosesTokenizerSpans(MosesTokenizer):
     def __init__(self, lang="en", custom_nonbreaking_prefixes_file=None):
-        # Initialize the object.
         MosesTokenizer.__init__(self, lang=lang,
                                 custom_nonbreaking_prefixes_file=custom_nonbreaking_prefixes_file)
         self.lang = lang
@@ -32,7 +29,6 @@ class MosesTokenizerSpans(MosesTokenizer):
             self,
             text,
             aggressive_dash_splits=False,
-            return_str=False,
             escape=True,
             protected_patterns=None,
     ):
@@ -40,27 +36,30 @@ class MosesTokenizerSpans(MosesTokenizer):
         import re
         detokenizer = MosesDetokenizer(lang=self.lang)
         tokens = self.tokenize(text=text, aggressive_dash_splits=aggressive_dash_splits,
-                               return_str=return_str, escape=escape,
+                               return_str=False, escape=escape,
                                protected_patterns=protected_patterns)
         tail = text
         accum = 0
         tokens_spans = []
         for token in tokens:
-            escaped_token = re.escape(token)
-            detokenized_token = detokenizer.detokenize(tokens=[escaped_token],
-                                                       return_str=return_str,
-                                                       unescape=escape)[0]
-            m = re.search(detokenized_token, tail)
+            detokenized_token = detokenizer.detokenize(tokens=[token],
+                                                       return_str=True,
+                                                       unescape=escape)
+            escaped_token = re.escape(detokenized_token)
+
+            m = re.search(escaped_token, tail)
             tok_start_pos, tok_end_pos = m.span()
             sent_start_pos = accum + tok_start_pos
             sent_end_pos = accum + tok_end_pos
             accum += tok_end_pos
             tail = tail[tok_end_pos:]
-            tokens_spans.append((token, (sent_start_pos, sent_end_pos)))
+
+            tokens_spans.append((detokenized_token, (sent_start_pos, sent_end_pos)))
         return tokens_spans
 
 
-def build_moses_tokenizer(tokenizer: MosesTokenizer,
+
+def build_moses_tokenizer(tokenizer: MosesTokenizerSpans,
                           normalizer: MosesPunctNormalizer = None) -> Callable[[str], List[Token]]:
     """
     Wrap Spacy model to build a tokenizer for the Sentence class.
@@ -68,12 +67,8 @@ def build_moses_tokenizer(tokenizer: MosesTokenizer,
     :return a tokenizer function to provide to Sentence class constructor
     """
     try:
-        pass
         from sacremoses import MosesTokenizer
         from sacremoses import MosesPunctNormalizer
-        # from spacy.language import Language
-        # from spacy.tokens.doc import Doc
-        # from spacy.tokens.token import Token as SpacyToken
     except ImportError:
         raise ImportError(
             "Please install sacremoses or better before using the Spacy tokenizer, otherwise you can use segtok_tokenizer as advanced tokenizer."
@@ -86,7 +81,7 @@ def build_moses_tokenizer(tokenizer: MosesTokenizer,
     def tokenizer(text: str) -> List[Token]:
         if normalizer:
             text = normalizer.normalize(text=text)
-        doc = moses_tokenizer.span_tokenize(text=text)
+        doc = moses_tokenizer.span_tokenize(text=text, escape=False)
         previous_token = None
         tokens: List[Token] = []
         for word, (start_pos, end_pos) in doc:
@@ -188,7 +183,8 @@ def run_standalone_app(
         filename
 ):
     """Run demo app (tests/dashbio_demos/*/app.py) as standalone app."""
-    app = dash.Dash(__name__)
+    app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+
     app.scripts.config.serve_locally = True
     # Handle callback to component with id "fullband-switch"
     app.config['suppress_callback_exceptions'] = True
@@ -217,40 +213,58 @@ def run_standalone_app(
 
 flair_moses_tokenize = flair_moses_tokenizer()
 
+ENTITIES = {"PER_PRENOM": "PRENOM", "PER_NOM": "NOM", "LOC": "ADRESSE"}
 
-def render_pseudo_html(sentences, colors=None):
+
+def prepare_html(sentences_tagged, original_text):
     singles = [f"{letter}..." for letter in ascii_uppercase]
     doubles = [f"{a}{b}..." for a, b in list(itertools.combinations(ascii_uppercase, 2))]
     pseudos = singles + doubles
     pseudo_entity_dict = {}
+    sentences_pseudonymized = copy.deepcopy(sentences_tagged)
 
-    for id_sn, sent in enumerate(sentences):
+    def generate_html_components(senteces, original_text):
+        html_components = []
+        for i_sent, sent in enumerate(senteces):
+            sent_span = sent.get_spans("ner")
+            if not sent_span:
+                html_components.append(html.P(sent.to_original_text()))
+            else:
+                temp_list = []
+                index = 0
+                for span in sent_span:
+                    start = span.start_pos
+                    end = span.end_pos
+                    temp_list.append(original_text[i_sent][index:start])
+                    index = end
+                    temp_list.append(
+                        html.Mark(children=span.text, **{"data-entity": ENTITIES[span.tag], "data-index": ""}))
+                temp_list.append(original_text[i_sent][index:])
+                html_components.append(html.P(temp_list))
+        return html_components
 
-        for span in sent.get_spans("ner"):
-            if "LOC" in span.tag:
-                for id_tok in range(len(span.tokens)):
-                    span.tokens[id_tok].text = "..."
+    for id_sn, sent in enumerate(sentences_pseudonymized):
+        for sent_span in sent.get_spans("ner"):
+            if "LOC" in sent_span.tag:
+                for id_tok in range(len(sent_span.tokens)):
+                    sent_span.tokens[id_tok].text = "..."
             else:
                 pass
-                for id_tok, token in enumerate(span.tokens):
+                for id_tok, token in enumerate(sent_span.tokens):
                     replacement = pseudo_entity_dict.get(token.text.lower(), pseudos.pop(0))
                     pseudo_entity_dict[token.text.lower()] = replacement
-                    span.tokens[id_tok].text = replacement
-                #     pseudo_tokens.append(Token(text=replacement,
-                #                                idx=token.idx,
-                #                                start_position=token.start_pos))
-                # new_span = Span(tokens=pseudo_tokens, tag=span.tag)
+                    sent_span.tokens[id_tok].text = replacement
 
-    return render_ner_html(sentences, colors=colors)
+    html_components_anonym = generate_html_components(senteces=sentences_pseudonymized,
+                                                      original_text=original_text)
+    html_components_tagged = generate_html_components(senteces=sentences_tagged,
+                                                      original_text=original_text)
+    return html_components_anonym, html_components_tagged
 
 
 def create_html_outputs(text, tagger, word_tokenizer=None):
     if not word_tokenizer:
         tokenizer = flair_moses_tokenize
-
-    singles = ["{}...".format(letter) for letter in ascii_uppercase]
-    doubles = ["{}{}...".format(d[0], d[1]) for d in list(itertools.combinations(ascii_uppercase, 2))]
-    pseudos = singles + doubles
 
     text = [t.strip() for t in text.split("\n") if t.strip()]
 
@@ -260,15 +274,10 @@ def create_html_outputs(text, tagger, word_tokenizer=None):
                                       use_tokenizer=tokenizer,
                                       verbose=True)
 
-    sentences_pseudonymized = copy.deepcopy(sentences_tagged)
-    # We create the html render for the tagged div
-    html_tagged = render_ner_html(sentences=sentences_tagged, colors=colors)
+    html_pseudoynmized, html_tagged = prepare_html(sentences_tagged=sentences_tagged,
+                                                   original_text=text)
 
-    # We create the html render for the pseudonymized div
-    html_pseudoynmized = render_pseudo_html(sentences=sentences_tagged, colors=colors)
-
-
-    return html_tagged, html_pseudoynmized
+    return html_pseudoynmized, html_tagged
 
 
 def file2txt(doc_path: str):
