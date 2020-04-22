@@ -28,9 +28,9 @@ def description():
     return "Test d'une application de pseudonimysation pour le Lab IA"
 
 
-tab_about_content = dcc.Tab(
+tab_about_content = dbc.Tab(
     label='À propos',
-    value='what-is',
+    tab_id="tab-about",
     children=html.Div(className='page', children=[
         html.H4(className='what-is', children='Pourquoi un outil de pseudonymization?'),
         html.P("Le règlement général sur la protection des données (RGPD) n’impose pas aux "
@@ -46,9 +46,9 @@ tab_about_content = dcc.Tab(
     ])
 )
 
-tab_upload_content = dcc.Tab(
+tab_upload_content = dbc.Tab(
     label='Données',
-    value='data',
+    tab_id="tab-upload",
     children=html.Div(className='control-tab', children=[
         html.Div(
             id='preloaded-and-uploaded-alert',
@@ -79,9 +79,9 @@ tab_upload_content = dcc.Tab(
     ])
 )
 
-tab_errors_content = dcc.Tab(
+tab_errors_content = dbc.Tab(
     label='Errors',
-    value='errors',
+    tab_id="tab-errors",
     children=html.Div(className='page', children=[
         html.H4(className='what-is', children="Visualisation et correction d'erreures"),
         html.P("Mais combien des données j'en ai besoin pour entrainer un modele similaire ?"
@@ -103,13 +103,13 @@ def layout():
         html.Div(id='seq-view-control-tabs',
                  className="four columns div-user-controls",
                  children=[
-                     dcc.Tabs(id='seq-view-tabs', value='what-is', children=[
+                     dbc.Tabs(id='main-tabs', children=[
                          tab_about_content,
                          tab_upload_content,
                          tab_errors_content
-                     ]),
+                     ], active_tab="tab-about"),
                  ]),
-        html.Div(id='seq-view-control', className="seven columns")
+        html.Div(id='right-pane', className="seven columns")
     ])
     return div
 
@@ -117,15 +117,31 @@ def layout():
 def callbacks(_app):
     """ Define callbacks to be executed on page change"""
 
-    @_app.callback(Output('seq-view-control', 'children'),
+    @_app.callback(Output("content", "children"), [Input("main-tabs", "active_tab")])
+    def switch_tab(at):
+        if at == "tab-about":
+            return None
+        elif at == "tab-upload":
+            return None
+        return html.P("This shouldn't ever be displayed...")
+
+    @_app.callback(Output('right-pane', 'children'),
                    [Input('upload-data', 'contents'),
                     Input('upload-data', 'filename'),
-                    Input('upload-data', 'last_modified')])
-    def update_sequence(content, list_of_file_names, list_of_dates):
-        if content == None:
+                    Input('upload-data', 'last_modified'),
+                    Input("main-tabs", "active_tab")])
+    def update_sequence(content, list_of_file_names, list_of_dates, tab_is_at):
+
+        if tab_is_at == "tab-about":
+            return None
+        elif tab_is_at == "tab-errors":
+            return None
+
+        if content is None:
             return html.Div("Chargez un fichier dans l'onglet données pour le faire apparaitre pseudonymisé ici",
                             style={"width": "100%", "display": "flex", "align-items": "center",
                                    "justify-content": "center"})
+
         extension = list_of_file_names.split(".")[-1]
         temp_path = f"/tmp/output.{extension}"
         content_type, content_string = content.split(',')
