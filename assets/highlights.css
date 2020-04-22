@@ -1,21 +1,41 @@
-[data-entity][data-entity="Nom"] {
+[data-entity] {
+ padding:.25em .35em;
+ margin:0 .25em;
+ line-height:1;
+ display:inline-block;
+ border-radius:.25em;
+ border:1px solid
+}
+[data-entity]:after {
+ box-sizing:border-box;
+ content:attr(data-entity);
+ font-size:.6em;
+ line-height:1;
+ padding:.35em .35em;
+ border-radius:.35em;
+ text-transform:uppercase;
+ display:inline-block;
+ vertical-align:middle;
+ margin:0 0 .1rem .5rem
+}
+[data-entity][data-entity="NOM"] {
  background:rgba(166,226,45,0.2);
  border-color:#a6e22d
 }
-[data-entity][data-entity="Nom"]:after {
+[data-entity][data-entity="NOM"]:after {
  background:#a6e22d
 }
-[data-entity][data-entity="Prenom"] {
+[data-entity][data-entity="PRENOM"] {
  background:rgba(47,187,171,0.2);
  border-color:#2fbbab
 }
-[data-entity][data-entity="Prenom"]:after {
+[data-entity][data-entity="PRENOM"]:after {
  background:#2fbbab
 }
-[data-entity][data-entity="Adresse"] {
+[data-entity][data-entity="ADRESSE"] {
  background:rgba(224,0,132,0.2);
- border-color:#e00084
+ border-color:#d45fa3
 }
-[data-entity][data-entity="Adresse"]:after {
- background:#e00084
+[data-entity][data-entity="ADRESSE"]:after {
+ background:#d45fa3
 }
