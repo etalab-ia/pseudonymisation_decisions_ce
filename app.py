@@ -2,14 +2,17 @@ import os
 import base64
 import sys
 
+from dash import dash
+
 import dash_interface.helper
 
 sys.path.append("../")
 
 from dash.dependencies import Input, Output
+import dash_bootstrap_components as dbc
 import dash_html_components as html
 import dash_core_components as dcc
-from dash_interface.helper import run_standalone_app, word_tokenizer, tagger
+from dash_interface.helper import run_standalone_app, tagger
 
 DATAPATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')
 
@@ -70,7 +73,7 @@ def layout():
                                           className='app-controls-block'),
 
                                  html.Div(
-                                     id='seq-view-fasta-upload',
+                                     id='seq-view-fast-upload',
                                      children=[
                                          dcc.Upload(
                                              id='upload-data',
@@ -101,15 +104,26 @@ def layout():
                  ]),
         html.Div(id='seq-view-control',
                  className="seven columns div-user-controls",
-                 children=html.Div(className='page', id="text-output")),
+                 children=dbc.Container(
+                     [
+                         dbc.Row([dbc.Col(html.Div(id="text-output-tagged", style={"maxHeight": "400px",
+                                                                                   "overflow-y": "scroll"}))],
+                                 className="h-50"),
+                         dbc.Row([dbc.Col(html.Div(id="text-output-anonym", style={"maxHeight": "400px",
+                                                                                   "overflow-y":"scroll"}))],
+                                 className="h-50"),
+                 ], style={"height": "100vh"}, className="page"))
     ])
     return div
-
+    # html.Div(id="text-output-tagged"),
+    # html.Br(),
+    # html.Div(id="text-output-anonym")
 
 def callbacks(_app):
     """ Define callbacks to be executed on page change"""
 
-    @_app.callback(Output('text-output', 'children'),
+    @_app.callback([Output('text-output-tagged', 'children'),
+                    Output('text-output-anonym', 'children')],
                    [Input('upload-data', 'contents'),
                     Input('upload-data', 'filename'),
                     Input('upload-data', 'last_modified')])
@@ -117,7 +131,7 @@ def callbacks(_app):
         if content == None:
             return html.Div("Chargez un fichier dans l'onglet données pour le faire apparaitre pseudonymisé ici",
                             style={"width": "100%", "display": "flex", "align-items": "center",
-                                   "justify-content": "center"})
+                                   "justify-content": "center"}), None
         extension = list_of_file_names.split(".")[-1]
         temp_path = f"/tmp/output.{extension}"
         content_type, content_string = content.split(',')
@@ -128,9 +142,9 @@ def callbacks(_app):
         f.close()
         decoded = dash_interface.helper.load_text(temp_path)
 
-        html_tagged, html_pseudoynmized = dash_interface.helper.create_html_outputs(text=decoded, tagger=tagger)
+        html_pseudoynmized, html_tagged = dash_interface.helper.create_html_outputs(text=decoded, tagger=tagger)
 
-        return html_tagged
+        return html_tagged, html_pseudoynmized
 
 
 # only declare app/server if the file is being run directly
