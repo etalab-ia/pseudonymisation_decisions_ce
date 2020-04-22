@@ -16,7 +16,7 @@ from flair.models import SequenceTagger
 from sacremoses import MosesTokenizer, MosesDetokenizer, MosesPunctNormalizer
 
 word_tokenizer = MosesTokenizer("fr").tokenize
-tagger = SequenceTagger.load('/home/pavel/code/pseudo_conseil_etat/models/nb_docs_datasets/1600_200_200/best-model.pt')
+tagger = SequenceTagger.load('/home/pavel/code/pseudo_conseil_etat/models/flair_embeds/1600_200_200/best-model.pt')
 
 
 class MosesTokenizerSpans(MosesTokenizer):
