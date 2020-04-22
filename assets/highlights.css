@@ -39,3 +39,49 @@
 [data-entity][data-entity="ADRESSE"]:after {
  background:#d45fa3
 }
+
+/* Styles for the vraie-faux entities in the errors tab
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+[data-entity][data-entity="VRAI-NOM"] {
+ background:rgba(166,226,45,0.2);
+ border-color:#a6e22d
+}
+[data-entity][data-entity="VRAI-NOM"]:after {
+ background:#a6e22d
+}
+[data-entity][data-entity="VRAI-PRENOM"] {
+ background:rgba(47,187,171,0.2);
+ border-color:#2fbbab
+}
+[data-entity][data-entity="VRAI-PRENOM"]:after {
+ background:#2fbbab
+}
+[data-entity][data-entity="VRAIE-ADRESSE"] {
+ background:rgba(224,0,132,0.2);
+ border-color:#d45fa3
+}
+[data-entity][data-entity="VRAIE-ADRESSE"]:after {
+ background:#d45fa3
+}
+
+[data-entity][data-entity="FAUX-NOM"] {
+ background:rgba(166,226,45,0.2);
+ border-color:#a6e22d
+}
+[data-entity][data-entity="FAUX-NOM"]:after {
+ background:#a6e22d
+}
+[data-entity][data-entity="FAUX-PRENOM"] {
+ background:rgba(47,187,171,0.2);
+ border-color:#2fbbab
+}
+[data-entity][data-entity="FAUX-PRENOM"]:after {
+ background:#2fbbab
+}
+[data-entity][data-entity="FAUSSE-ADRESSE"] {
+ background:rgba(224,0,132,0.2);
+ border-color:#d45fa3
+}
+[data-entity][data-entity="FAUSSE-ADRESSE"]:after {
+ background:#d45fa3
+}
