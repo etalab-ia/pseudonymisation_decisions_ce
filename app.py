@@ -1,3 +1,4 @@
+import json
 import os
 import base64
 import sys
@@ -11,6 +12,7 @@ sys.path.append("../")
 from dash.dependencies import Input, Output
 import dash_bootstrap_components as dbc
 import dash_html_components as html
+from dash_html_components import P as P
 import dash_core_components as dcc
 from dash_interface.helper import run_standalone_app, tagger
 
@@ -60,7 +62,7 @@ tab_upload_content = dbc.Tab(
             ],
             style={'display': 'none'}
         ),
-        html.Div("Veuiller choisir un fichier",
+        html.Div("Veuiller choisir un fichier (type .doc, .docx, .txt. Max 200 Ko)",
                  className='app-controls-block'),
 
         html.Div(
@@ -69,6 +71,7 @@ tab_upload_content = dbc.Tab(
                 dcc.Upload(
                     id='upload-data',
                     className='control-upload',
+                    max_size="200000",  # 200 kb
                     children=html.Div([
                         "Faire glisser ou cliquer pour charger un fichier"
                     ]),
@@ -109,42 +112,32 @@ def layout():
                          tab_errors_content
                      ], active_tab="tab-about"),
                  ]),
-        html.Div(id='right-pane', className="seven columns")
+        html.Div(id='right-pane', className="seven columns"),
     ])
     return div
 
 
 def callbacks(_app):
     """ Define callbacks to be executed on page change"""
-
-    @_app.callback(Output("content", "children"), [Input("main-tabs", "active_tab")])
-    def switch_tab(at):
-        if at == "tab-about":
-            return None
-        elif at == "tab-upload":
-            return None
-        return html.P("This shouldn't ever be displayed...")
-
     @_app.callback(Output('right-pane', 'children'),
                    [Input('upload-data', 'contents'),
                     Input('upload-data', 'filename'),
-                    Input('upload-data', 'last_modified'),
                     Input("main-tabs", "active_tab")])
-    def update_sequence(content, list_of_file_names, list_of_dates, tab_is_at):
+    def pseudo_pane(contents, list_of_file_names, tab_is_at):
 
         if tab_is_at == "tab-about":
-            return None
+            return None, None
         elif tab_is_at == "tab-errors":
-            return None
+            return None, None
 
-        if content is None:
+        if contents is None:
             return html.Div("Chargez un fichier dans l'onglet données pour le faire apparaitre pseudonymisé ici",
                             style={"width": "100%", "display": "flex", "align-items": "center",
                                    "justify-content": "center"})
 
         extension = list_of_file_names.split(".")[-1]
         temp_path = f"/tmp/output.{extension}"
-        content_type, content_string = content.split(',')
+        content_type, content_string = contents.split(',')
         decoded = base64.b64decode(content_string)
 
         f = open(temp_path, 'wb')
@@ -153,7 +146,6 @@ def callbacks(_app):
         decoded = dash_interface.helper.load_text(temp_path)
 
         html_pseudoynmized, html_tagged = dash_interface.helper.create_html_outputs(text=decoded, tagger=tagger)
-
         children = dbc.Container(
             [
                 html.H4("Document annotée"),
@@ -167,14 +159,10 @@ def callbacks(_app):
                                                                           "overflow-y": "scroll"}))],
                         className="h-50"),
             ], style={"height": "100vh"}, className="page")
-
         return children
 
-
-# only declare app/server if the file is being run directly
-if 'DEMO_STANDALONE' not in os.environ:
-    app = run_standalone_app(layout, callbacks, header_colors, __file__)
-    server = app.server
-
 if __name__ == '__main__':
+    app = run_standalone_app(layout, callbacks, header_colors, __file__)
+    #
     app.run_server(debug=False, port=8050)
+    pass

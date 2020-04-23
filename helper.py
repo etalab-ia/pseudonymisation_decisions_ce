@@ -1,15 +1,18 @@
 import base64
 import copy
 import itertools
+import os
 import subprocess
+from importlib import import_module
 from string import ascii_uppercase
-from typing import Callable, List
+from typing import Callable, List, Dict
 
 import dash
 import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_html_components as html
 import textract
+from dash.development.base_component import Component
 from flair.data import Token, Span
 
 from flair.models import SequenceTagger
@@ -56,7 +59,6 @@ class MosesTokenizerSpans(MosesTokenizer):
 
             tokens_spans.append((detokenized_token, (sent_start_pos, sent_end_pos)))
         return tokens_spans
-
 
 
 def build_moses_tokenizer(tokenizer: MosesTokenizerSpans,
@@ -223,9 +225,9 @@ def prepare_html(sentences_tagged, original_text):
     pseudo_entity_dict = {}
     sentences_pseudonymized = copy.deepcopy(sentences_tagged)
 
-    def generate_html_components(senteces, original_text):
+    def generate_html_components(sentences, original_text):
         html_components = []
-        for i_sent, sent in enumerate(senteces):
+        for i_sent, sent in enumerate(sentences):
             sent_span = sent.get_spans("ner")
             if not sent_span:
                 html_components.append(html.P(sent.to_original_text()))
@@ -255,11 +257,63 @@ def prepare_html(sentences_tagged, original_text):
                     pseudo_entity_dict[token.text.lower()] = replacement
                     sent_span.tokens[id_tok].text = replacement
 
-    html_components_anonym = generate_html_components(senteces=sentences_pseudonymized,
+    html_components_anonym = generate_html_components(sentences=sentences_pseudonymized,
                                                       original_text=original_text)
-    html_components_tagged = generate_html_components(senteces=sentences_tagged,
+    html_components_tagged = generate_html_components(sentences=sentences_tagged,
                                                       original_text=original_text)
     return html_components_anonym, html_components_tagged
+
+
+def load_class(class_namespace, class_type):
+    try:
+        module = import_module(class_namespace)
+        class_ = getattr(module, class_type)
+        return class_
+    except:
+        print(f"Cannot import {class_namespace}:{class_type}. Is it installed?")
+        return None
+
+    pass
+
+
+def deserialize_html_components(component_dict: Dict):
+    class_type = component_dict["type"]
+    class_namespace = component_dict["namespace"].split("/")[0]
+    # Try loading it
+    class_ = load_class(class_namespace, class_type)
+    if not class_:
+        print(f"Cannot continue.")
+        return None
+
+    # we begin deserializing
+    component_children = component_dict["props"]["children"]
+    if isinstance(component_children, str):
+        return class_(**component_dict["props"])
+    elif isinstance(component_children, list):
+        deserialized_children = []
+        for child in component_children:
+            if isinstance(child, str):
+                deserialized_children.append(child)
+            elif isinstance(child, dict):
+                deserialized_children.append(deserialize_html_components(child))
+
+    return class_(children=deserialized_children)
+
+
+def serialize_html_components(component: Component):
+    component_dict = component.to_plotly_json()
+    component_children = component_dict["props"]["children"]
+    if isinstance(component_children, str):
+        return component_dict
+    elif isinstance(component_children, list):
+        serialized_children = []
+        for child in component_children:
+            if isinstance(child, str):
+                serialized_children.append(child)
+            elif isinstance(child, Component):
+                serialized_children.append(serialize_html_components(child))
+    component_dict["props"]["children"] = serialized_children
+    return component_dict
 
 
 def create_html_outputs(text, tagger, word_tokenizer=None):
