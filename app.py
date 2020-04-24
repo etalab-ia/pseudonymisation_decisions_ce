@@ -12,9 +12,8 @@ sys.path.append("../")
 from dash.dependencies import Input, Output
 import dash_bootstrap_components as dbc
 import dash_html_components as html
-from dash_html_components import P as P
 import dash_core_components as dcc
-from dash_interface.helper import run_standalone_app, tagger
+from dash_interface.helper import run_standalone_app, tagger, deserialize_components, serialize_components
 
 DATAPATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')
 
@@ -103,6 +102,7 @@ def layout():
     :return:  Layout
     """
     div = html.Div(id='seq-view-body', className='app-body', children=[
+        dcc.Store(id='session-store', storage_type='session'),
         html.Div(id='seq-view-control-tabs',
                  className="four columns div-user-controls",
                  children=[
@@ -119,7 +119,9 @@ def layout():
 
 def callbacks(_app):
     """ Define callbacks to be executed on page change"""
-    @_app.callback(Output('right-pane', 'children'),
+    @_app.callback([Output('right-pane', 'children'),
+                    Output('session-store', 'data')],
+
                    [Input('upload-data', 'contents'),
                     Input('upload-data', 'filename'),
                     Input("main-tabs", "active_tab")])
@@ -159,7 +161,12 @@ def callbacks(_app):
                                                                           "overflow-y": "scroll"}))],
                         className="h-50"),
             ], style={"height": "100vh"}, className="page")
-        return children
+
+
+
+        serial_test = serialize_components(children)
+        unserial_test = deserialize_components(serial_test)
+        return unserial_test
 
 if __name__ == '__main__':
     app = run_standalone_app(layout, callbacks, header_colors, __file__)

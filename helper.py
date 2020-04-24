@@ -273,10 +273,8 @@ def load_class(class_namespace, class_type):
         print(f"Cannot import {class_namespace}:{class_type}. Is it installed?")
         return None
 
-    pass
 
-
-def deserialize_html_components(component_dict: Dict):
+def deserialize_components(component_dict: Dict):
     class_type = component_dict["type"]
     class_namespace = component_dict["namespace"].split("/")[0]
     # Try loading it
@@ -295,23 +293,24 @@ def deserialize_html_components(component_dict: Dict):
             if isinstance(child, str):
                 deserialized_children.append(child)
             elif isinstance(child, dict):
-                deserialized_children.append(deserialize_html_components(child))
+                deserialized_children.append(deserialize_components(child))
+        component_dict["props"]["children"] = deserialized_children
+        return class_(**component_dict["props"])
 
-    return class_(children=deserialized_children)
 
-
-def serialize_html_components(component: Component):
+def serialize_components(component: Component):
     component_dict = component.to_plotly_json()
     component_children = component_dict["props"]["children"]
     if isinstance(component_children, str):
         return component_dict
-    elif isinstance(component_children, list):
-        serialized_children = []
-        for child in component_children:
-            if isinstance(child, str):
-                serialized_children.append(child)
-            elif isinstance(child, Component):
-                serialized_children.append(serialize_html_components(child))
+    elif not isinstance(component_children, list):
+        component_children = [component_children]
+    serialized_children = []
+    for child in component_children:
+        if isinstance(child, str):
+            serialized_children.append(child)
+        elif isinstance(child, Component):
+            serialized_children.append(serialize_components(child))
     component_dict["props"]["children"] = serialized_children
     return component_dict
 
