@@ -2,6 +2,8 @@ import json
 import os
 import base64
 import sys
+from hashlib import md5
+from typing import Dict
 
 from dash import dash
 
@@ -9,11 +11,11 @@ import dash_interface.helper
 
 sys.path.append("../")
 
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
 import dash_bootstrap_components as dbc
 import dash_html_components as html
 import dash_core_components as dcc
-from dash_interface.helper import run_standalone_app, tagger, deserialize_components, serialize_components
+from dash_interface.helper import run_standalone_app, tagger
 
 DATAPATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')
 
@@ -119,27 +121,38 @@ def layout():
 
 def callbacks(_app):
     """ Define callbacks to be executed on page change"""
+
     @_app.callback([Output('right-pane', 'children'),
                     Output('session-store', 'data')],
 
                    [Input('upload-data', 'contents'),
                     Input('upload-data', 'filename'),
-                    Input("main-tabs", "active_tab")])
-    def pseudo_pane(contents, list_of_file_names, tab_is_at):
+                    Input("main-tabs", "active_tab")],
+                   [State('session-store', 'data')])
+    def pseudo_pane(contents, file_name: str, tab_is_at, data: Dict):
 
         if tab_is_at == "tab-about":
-            return None, None
+            return None, data
         elif tab_is_at == "tab-errors":
-            return None, None
+            return None, data
 
         if contents is None:
             return html.Div("Chargez un fichier dans l'onglet données pour le faire apparaitre pseudonymisé ici",
                             style={"width": "100%", "display": "flex", "align-items": "center",
                                    "justify-content": "center"})
 
-        extension = list_of_file_names.split(".")[-1]
+        file_name, extension = file_name.split(".")
         temp_path = f"/tmp/output.{extension}"
         content_type, content_string = contents.split(',')
+
+        content_id = md5(content_string.encode("utf-8")).hexdigest()
+
+        data = data or {content_id: []}
+        if content_id in data and data[content_id]:
+            children = data[content_id]
+            return children, data
+
+        # If we do not have it stored, compute it
         decoded = base64.b64decode(content_string)
 
         f = open(temp_path, 'wb')
@@ -162,11 +175,10 @@ def callbacks(_app):
                         className="h-50"),
             ], style={"height": "100vh"}, className="page")
 
+        data.clear()
+        data[content_id] = children
+        return children, data
 
-
-        serial_test = serialize_components(children)
-        unserial_test = deserialize_components(serial_test)
-        return unserial_test
 
 if __name__ == '__main__':
     app = run_standalone_app(layout, callbacks, header_colors, __file__)
