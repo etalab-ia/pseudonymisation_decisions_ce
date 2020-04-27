@@ -1,9 +1,11 @@
 import base64
 import copy
+import glob
 import itertools
-import os
+import pandas as pd
 import subprocess
 from importlib import import_module
+from pathlib import Path
 from string import ascii_uppercase
 from typing import Callable, List, Dict
 
@@ -13,7 +15,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 import textract
 from dash.development.base_component import Component
-from flair.data import Token, Span
+from flair.data import Token
 
 from flair.models import SequenceTagger
 from sacremoses import MosesTokenizer, MosesDetokenizer, MosesPunctNormalizer
@@ -213,19 +215,17 @@ def run_standalone_app(
     return app
 
 
-flair_moses_tokenize = flair_moses_tokenizer()
-
 ENTITIES = {"PER_PRENOM": "PRENOM", "PER_NOM": "NOM", "LOC": "ADRESSE"}
 
 
-def prepare_html(sentences_tagged, original_text):
+def prepare_tab_2_html(sentences_tagged, original_text):
     singles = [f"{letter}..." for letter in ascii_uppercase]
     doubles = [f"{a}{b}..." for a, b in list(itertools.combinations(ascii_uppercase, 2))]
     pseudos = singles + doubles
     pseudo_entity_dict = {}
     sentences_pseudonymized = copy.deepcopy(sentences_tagged)
 
-    def generate_html_components(sentences, original_text):
+    def generate_tab_2_html_components(sentences, original_text):
         html_components = []
         for i_sent, sent in enumerate(sentences):
             sent_span = sent.get_spans("ner")
@@ -257,10 +257,10 @@ def prepare_html(sentences_tagged, original_text):
                     pseudo_entity_dict[token.text.lower()] = replacement
                     sent_span.tokens[id_tok].text = replacement
 
-    html_components_anonym = generate_html_components(sentences=sentences_pseudonymized,
-                                                      original_text=original_text)
-    html_components_tagged = generate_html_components(sentences=sentences_tagged,
-                                                      original_text=original_text)
+    html_components_anonym = generate_tab_2_html_components(sentences=sentences_pseudonymized,
+                                                            original_text=original_text)
+    html_components_tagged = generate_tab_2_html_components(sentences=sentences_tagged,
+                                                            original_text=original_text)
     return html_components_anonym, html_components_tagged
 
 
@@ -274,50 +274,9 @@ def load_class(class_namespace, class_type):
         return None
 
 
-def deserialize_components(component_dict: Dict):
-    class_type = component_dict["type"]
-    class_namespace = component_dict["namespace"].split("/")[0]
-    # Try loading it
-    class_ = load_class(class_namespace, class_type)
-    if not class_:
-        print(f"Cannot continue.")
-        return None
-
-    # we begin deserializing
-    component_children = component_dict["props"]["children"]
-    if isinstance(component_children, str):
-        return class_(**component_dict["props"])
-    elif isinstance(component_children, list):
-        deserialized_children = []
-        for child in component_children:
-            if isinstance(child, str):
-                deserialized_children.append(child)
-            elif isinstance(child, dict):
-                deserialized_children.append(deserialize_components(child))
-        component_dict["props"]["children"] = deserialized_children
-        return class_(**component_dict["props"])
-
-
-def serialize_components(component: Component):
-    component_dict = component.to_plotly_json()
-    component_children = component_dict["props"]["children"]
-    if isinstance(component_children, str):
-        return component_dict
-    elif not isinstance(component_children, list):
-        component_children = [component_children]
-    serialized_children = []
-    for child in component_children:
-        if isinstance(child, str):
-            serialized_children.append(child)
-        elif isinstance(child, Component):
-            serialized_children.append(serialize_components(child))
-    component_dict["props"]["children"] = serialized_children
-    return component_dict
-
-
-def create_html_outputs(text, tagger, word_tokenizer=None):
+def create_tab_2_html_outputs(text, tagger, word_tokenizer=None):
     if not word_tokenizer:
-        tokenizer = flair_moses_tokenize
+        tokenizer = flair_moses_tokenizer()
 
     text = [t.strip() for t in text.split("\n") if t.strip()]
 
@@ -327,8 +286,8 @@ def create_html_outputs(text, tagger, word_tokenizer=None):
                                       use_tokenizer=tokenizer,
                                       verbose=True)
 
-    html_pseudoynmized, html_tagged = prepare_html(sentences_tagged=sentences_tagged,
-                                                   original_text=text)
+    html_pseudoynmized, html_tagged = prepare_tab_2_html(sentences_tagged=sentences_tagged,
+                                                         original_text=text)
 
     return html_pseudoynmized, html_tagged
 
@@ -346,29 +305,10 @@ def load_text(doc_path):
     return file2txt(doc_path)
 
 
-def build_pseudonymisation_map_flair(sentences, pseudos, acceptance_score, tags="all"):
-    """
-    Gets all replacements to be made in pseudonymized text using flair tagged sentences
+# def create_tab_3_html_outputs(path_example_decisions: Path):
+#     list_error_df = prepare_error_decisions(path_example_decisions)
+#
+#     pass
 
-    :param sentences: list of tuples (flair tagged sentences, original)
-    :param pseudos: list of pseudos to be used
-    :param acceptance_score: minimum confidence score to accept NER tag
-    :return: dict: keys are spans in sentence, values are pseudos
-    """
 
-    replacements = {}
-    mapping = {}
-    for sentence in sentences:
-        for token in sentence:
-            entity = token.get_tag("ner").value
-            if entity != 'O' and (entity in tags or tags == "all"):
-                entity = entity[2:]
-                if "LOC" not in entity:
-                    if token.text.lower() not in mapping:
-                        mapping[token.text.lower()] = pseudos.pop(0)
 
-                    replacements[sentence[token.idx - 1]] = mapping[token.text.lower()]
-                else:
-                    replacements[sentence[token.idx - 1]] = "..."
-
-    return replacements
