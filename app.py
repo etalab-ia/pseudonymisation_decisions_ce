@@ -8,6 +8,7 @@ from typing import Dict
 from dash import dash
 
 import dash_interface.helper
+from dash_interface.prepare_data import prepare_error_pane
 
 sys.path.append("../")
 
@@ -18,6 +19,8 @@ import dash_core_components as dcc
 from dash_interface.helper import run_standalone_app, tagger
 
 DATAPATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')
+ERROR_PANE_TAGGED_TEXT, ERROR_PANE_TEXT_STATS = prepare_error_pane()
+ERROR_FILE_DICT = []
 
 
 def header_colors():
@@ -53,16 +56,6 @@ tab_upload_content = dbc.Tab(
     label='Données',
     tab_id="tab-upload",
     children=html.Div(className='control-tab', children=[
-        html.Div(
-            id='preloaded-and-uploaded-alert',
-            className='app-controls-desc',
-            children=[
-                'You have uploaded your own data. In order \
-                to view it, please ensure that the "preloaded \
-                sequences" dropdown has been cleared.'
-            ],
-            style={'display': 'none'}
-        ),
         html.Div("Veuiller choisir un fichier (type .doc, .docx, .txt. Max 200 Ko)",
                  className='app-controls-block'),
 
@@ -87,15 +80,27 @@ tab_errors_content = dbc.Tab(
     label='Errors',
     tab_id="tab-errors",
     children=html.Div(className='page', children=[
-        html.H4(className='what-is', children="Visualisation et correction d'erreures"),
+        html.H4(className='what-is', children="Visualisation d'erreures"),
         html.P("Mais combien des données j'en ai besoin pour entrainer un modele similaire ?"
-               "Ici on vous montre les differences par rapport a la taille d"),
+               "Ici on vous montre les differences par rapport a la taille du corpus d'entrainement"),
         html.Br(),
-        html.P("Dans l'onglet données vous pouvez charger un fichier afin de le faire "
-               "pseudonimizer par l'algorithme "),
 
     ])
 )
+
+pane_errors_content = [
+    html.H5("Error display:"),
+    dbc.Container(id="error-pane", style={"maxHeight": "500px", "overflow-y": "scroll", "margin-bottom": "1cm"}),
+    html.H5("Choose a model:"),
+    dbc.Container(dcc.Slider(min=80, step=None, max=2400, id="error-slider", marks={80: '80', 160: '160',
+                                         400: '400', 600: '600',
+                                         800: '800', 1200: '1200',
+                                         1600: '1600', 2400: '2400'},
+               value=80), style={"margin-bottom": "1cm"}),
+    html.H5("Model errors:"),
+    dbc.Container(id="selected-model-description")
+
+]
 
 
 def layout():
@@ -114,7 +119,7 @@ def layout():
                          tab_errors_content
                      ], active_tab="tab-about"),
                  ]),
-        html.Div(id='right-pane', className="seven columns"),
+        dbc.Container(id='right-pane', className="seven columns")
     ])
     return div
 
@@ -122,24 +127,30 @@ def layout():
 def callbacks(_app):
     """ Define callbacks to be executed on page change"""
 
+    @_app.callback(Output("error-pane", 'children'),
+                   [Input('error-slider', 'value')])
+    def error_slider_update(value):
+        dict_values = {80: 0, 160: 1, 400: 2, 600: 3, 800: 4, 1200: 5,
+                       1600: 6, 2400: 7}
+
+        return html.Div(ERROR_PANE_TAGGED_TEXT[dict_values[value]])
+
     @_app.callback([Output('right-pane', 'children'),
                     Output('session-store', 'data')],
-
                    [Input('upload-data', 'contents'),
                     Input('upload-data', 'filename'),
                     Input("main-tabs", "active_tab")],
                    [State('session-store', 'data')])
-    def pseudo_pane(contents, file_name: str, tab_is_at, data: Dict):
+    def pseudo_pane_update(contents, file_name: str, tab_is_at, data: Dict):
 
         if tab_is_at == "tab-about":
             return None, data
         elif tab_is_at == "tab-errors":
-            return None, data
-
+            return pane_errors_content, data
         if contents is None:
             return html.Div("Chargez un fichier dans l'onglet données pour le faire apparaitre pseudonymisé ici",
                             style={"width": "100%", "display": "flex", "align-items": "center",
-                                   "justify-content": "center"})
+                                   "justify-content": "center"}), data
 
         file_name, extension = file_name.split(".")
         temp_path = f"/tmp/output.{extension}"
@@ -160,7 +171,7 @@ def callbacks(_app):
         f.close()
         decoded = dash_interface.helper.load_text(temp_path)
 
-        html_pseudoynmized, html_tagged = dash_interface.helper.create_html_outputs(text=decoded, tagger=tagger)
+        html_pseudoynmized, html_tagged = dash_interface.helper.create_tab_2_html_outputs(text=decoded, tagger=tagger)
         children = dbc.Container(
             [
                 html.H4("Document annotée"),
