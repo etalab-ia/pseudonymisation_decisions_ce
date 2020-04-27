@@ -19,7 +19,7 @@ import dash_core_components as dcc
 from dash_interface.helper import run_standalone_app, tagger
 
 DATAPATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')
-ERROR_PANE_TAGGED_TEXT, ERROR_PANE_TEXT_STATS = prepare_error_pane()
+ERROR_PANE_TAGGED_TEXT, ERROR_PANE_TEXT_STATS, DATASETS_STATS = prepare_error_pane()
 ERROR_FILE_DICT = []
 
 
@@ -89,16 +89,20 @@ tab_errors_content = dbc.Tab(
 )
 
 pane_errors_content = [
-    html.H5("Error display:"),
-    dbc.Container(id="error-pane", style={"maxHeight": "500px", "overflow-y": "scroll", "margin-bottom": "1cm"}),
     html.H5("Choose a model:"),
     dbc.Container(dcc.Slider(min=80, step=None, max=2400, id="error-slider", marks={80: '80', 160: '160',
                                          400: '400', 600: '600',
                                          800: '800', 1200: '1200',
                                          1600: '1600', 2400: '2400'},
-               value=80), style={"margin-bottom": "1cm"}),
-    html.H5("Model errors:"),
-    dbc.Container(id="selected-model-description")
+                             value=80), style={"margin-bottom": "1cm"}),
+    # html.H5("Error display:"),
+    dbc.Container(id="error-pane", style={"maxHeight": "350px", "overflow-y": "scroll", "margin-bottom": "1cm"},
+                  fluid=True),
+    html.H5("Erreures"),
+    dbc.Container(id="errors"),
+    html.H5("Annotations du dataset d'entraînement"),
+    dbc.Container(id="dataset-stats"),
+
 
 ]
 
@@ -119,7 +123,7 @@ def layout():
                          tab_errors_content
                      ], active_tab="tab-about"),
                  ]),
-        dbc.Container(id='right-pane', className="seven columns")
+        dbc.Container(id='right-pane', className="seven columns", fluid=True)
     ])
     return div
 
@@ -127,13 +131,29 @@ def layout():
 def callbacks(_app):
     """ Define callbacks to be executed on page change"""
 
-    @_app.callback(Output("error-pane", 'children'),
+    @_app.callback([Output("error-pane", 'children'),
+                    Output("errors", 'children'),
+                    Output("dataset-stats", 'children')],
                    [Input('error-slider', 'value')])
     def error_slider_update(value):
         dict_values = {80: 0, 160: 1, 400: 2, 600: 3, 800: 4, 1200: 5,
                        1600: 6, 2400: 7}
+        errors_stats = ERROR_PANE_TEXT_STATS[dict_values[value]]
+        dataset_stats = DATASETS_STATS[dict_values[value]]
+        errors = dcc.Markdown(f"""
+            * Nombre d'entités sous-reperées (un nom non trouvée par le modèle): {errors_stats["under_classifications"]}
+            * Nombre d'entités sur-reperées (le nom d'un greffier trouvé par le système): {errors_stats["over_classifications"]}
+            * Nombre d'entités mal reperées (un nom identifié comme un prènom): {errors_stats["miss_classifications"]}
+            * Nombre d'entités bien reperées (un nom bien identifié): {errors_stats["correct_classifications"]}
+            """)
 
-        return html.Div(ERROR_PANE_TAGGED_TEXT[dict_values[value]])
+        stats_dataset = dcc.Markdown(f"""
+            * Noms annotés : {dataset_stats[1]}
+            * Prènoms annotés : {dataset_stats[2]}
+            * Adresses annotées : {dataset_stats[0]}
+            """)
+
+        return html.Div(ERROR_PANE_TAGGED_TEXT[dict_values[value]]), errors, stats_dataset
 
     @_app.callback([Output('right-pane', 'children'),
                     Output('session-store', 'data')],
@@ -184,7 +204,7 @@ def callbacks(_app):
                                           id="text-output-anonym", style={"maxHeight": "500px",
                                                                           "overflow-y": "scroll"}))],
                         className="h-50"),
-            ], style={"height": "100vh"}, className="page")
+            ], style={"height": "100vh"}, fluid=True)
 
         data.clear()
         data[content_id] = children

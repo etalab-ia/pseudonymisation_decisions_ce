@@ -63,15 +63,15 @@ def prepare_error_decisions(decisions_path: Path):
         df_error.loc[df_error["token"] == "", "display_col"] = ""
 
         # Get simple stats
-        nb_noms = len(df_error[df_error["ture_tag"].str.startswith("B-PER_NOM")])
-        nb_prenoms = len(df_error[df_error["ture_tag"].str.startswith("B-PER_PRENOM")])
-        nb_loc = len(df_error[df_error["ture_tag"].str.startswith("B-LOC")])
+        nb_noms = len(df_error[df_error["true_tag"].str.startswith("B-PER_NOM")])
+        nb_prenoms = len(df_error[df_error["true_tag"].str.startswith("B-PER_PRENOM")])
+        nb_loc = len(df_error[df_error["true_tag"].str.startswith("B-LOC")])
 
         serie_stats = pd.Series({"nb_noms": nb_noms, "nb_prenoms": nb_prenoms, "nb_loc": nb_loc,
-                                           "under_classifications": len(under_pseudonymization),
-                                           "over_classifications": len(over_pseudonymization),
-                                           "miss_classifications": len(miss_pseudonymization),
-                                           "correct_classifications": len(correct_pseudonymization)})
+                                 "under_classifications": len(under_pseudonymization),
+                                 "over_classifications": len(over_pseudonymization),
+                                 "miss_classifications": len(miss_pseudonymization),
+                                 "correct_classifications": len(correct_pseudonymization)})
 
         dict_df[error_file.split("/")[-1]] = df_error.loc[:, ["token", "display_col"]]
         dict_stats[error_file.split("/")[-1]] = serie_stats
@@ -99,11 +99,11 @@ def generate_tab_3_html_components(sentences):
                 if type_tag == "C":  # this is a correct tag. Put it in green in CSS style
                     tagged_text = html.Mark(children=span.text,
                                             **{"data-correcttab": ENTITIES_DICT[new_tag],
-                                            "data-index": ""})
+                                               "data-index": ""})
                 elif type_tag == "E":
                     tagged_text = html.Mark(children=span.text,
                                             **{"data-errortab": ENTITIES_DICT[new_tag],
-                                            "data-index": ""})
+                                               "data-index": ""})
                 temp_list.append(tagged_text)
             temp_list.append(sent.to_original_text()[index:])
             html_components.append(html.P(temp_list))
@@ -111,15 +111,33 @@ def generate_tab_3_html_components(sentences):
 
 
 def prepare_error_pane():
+    """
+    This function generates the list of Dash components to show the errors produced while tagging a
+    document by several trained models. The inout is a set of CoNLL annotated files (three columns: token,
+    true tag, predicted tag). The output is a list of list of components describing the content of the CoNLL documents
+    with P (paragraphs) and Marks (highlights). It also returns a list of dicts that contain the stats of the errors/corrects
+    done by the corresponding model.
+
+    Returns:
+
+    """
     dict_df, data_stats = prepare_error_decisions(Path(TEXT_FILES))
+    list_stats_datasets = [(2, 219, 62),
+                      (3, 270, 91),
+                      (12, 1112, 396),
+                      (20, 1382, 296),
+                      (37, 2256, 804),
+                      (42, 2622, 679),
+                      (58, 3982, 1112),
+                      (109, 5516, 1298)]
 
     files_paths = []
-    list_stats_series = []
+    list_stats_errors = []
     for file_o in order_files:
         df: DataFrame = dict_df[file_o]
         df.to_csv(f"/tmp/{file_o[:-4]}.csv", sep="\t", header=None, index=None)
         files_paths.append(f"/tmp/{file_o[:-4]}.csv")
-        list_stats_series.append(data_stats[file_o])
+        list_stats_errors.append(data_stats[file_o])
 
     flair_datasets = []
     for path in files_paths:
@@ -130,8 +148,7 @@ def prepare_error_pane():
     html_components = []
     for flair_dataset in flair_datasets:
         html_components.append(generate_tab_3_html_components(flair_dataset))
-    return html_components, list_stats_series
-
+    return html_components, list_stats_errors, list_stats_datasets
 
 # html_components = prepare_tab_3()
 # import pickle
