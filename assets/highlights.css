@@ -40,48 +40,103 @@
  background:#d45fa3
 }
 
-/* Styles for the vraie-faux entities in the errors tab
+/* Styles for the incorrect entities in the errors tab
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
-[data-entity][data-entity="VRAI-NOM"] {
- background:rgba(166,226,45,0.2);
- border-color:#a6e22d
+[data-errortab] {
+ padding:.25em .35em;
+ margin:0 .25em;
+ line-height:1;
+ display:inline-block;
+ border-radius:.25em;
+ border:1px solid
 }
-[data-entity][data-entity="VRAI-NOM"]:after {
- background:#a6e22d
+[data-errortab]:after {
+ box-sizing:border-box;
+ content:attr(data-errortab);
+ font-size:.6em;
+ line-height:1;
+ padding:.35em .35em;
+ border-radius:.35em;
+ text-transform:uppercase;
+ display:inline-block;
+ vertical-align:middle;
+ margin:0 0 .1rem .5rem
 }
-[data-entity][data-entity="VRAI-PRENOM"] {
- background:rgba(47,187,171,0.2);
+[data-errortab][data-errortab="NOM"] {
+ background:rgba(226,0,0,0.2);
+ border-color:rgba(153, 54, 87, 0.4)
+}
+[data-errortab][data-errortab="NOM"]:after {
+ background:rgba(153, 54, 87, 0.4)
+}
+[data-errortab][data-errortab="PRENOM"] {
+ background:rgba(226,0,0,0.2);
+ border-color:rgba(153, 54, 87, 0.4)
+}
+[data-errortab][data-errortab="PRENOM"]:after {
+ background:rgba(153, 54, 87, 0.4)
+}
+[data-errortab][data-errortab="ADRESSE"] {
+ background:rgba(226,0,0,0.2);
+ border-color:rgba(153, 54, 87, 0.4)
+}
+[data-errortab][data-errortab="ADRESSE"]:after {
+ background:rgba(153, 54, 87, 0.4)
+}
+[data-errortab][data-errortab="NON REPERÉ"] {
+ background:rgba(226,0,0,0.2);
+ border-color:rgba(153, 54, 87, 0.397)
+}
+[data-errortab][data-errortab="NON REPERÉ"]:after {
+ background:rgba(153, 54, 87, 0.4)
+}
+/* Styles for the correct entities in the errors tab
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+[data-correcttab] {
+ padding:.25em .35em;
+ margin:0 .25em;
+ line-height:1;
+ display:inline-block;
+ border-radius:.25em;
+ border:1px solid
+}
+[data-correcttab]:after {
+ box-sizing:border-box;
+ content:attr(data-correcttab);
+ font-size:.6em;
+ line-height:1;
+ padding:.35em .35em;
+ border-radius:.35em;
+ text-transform:uppercase;
+ display:inline-block;
+ vertical-align:middle;
+ margin:0 0 .1rem .5rem
+}
+[data-correcttab][data-correcttab="NOM"] {
+ background:rgba(0,226,0,0.4);
  border-color:#2fbbab
 }
-[data-entity][data-entity="VRAI-PRENOM"]:after {
+[data-correcttab][data-correcttab="NOM"]:after {
  background:#2fbbab
 }
-[data-entity][data-entity="VRAIE-ADRESSE"] {
- background:rgba(224,0,132,0.2);
+[data-correcttab][data-correcttab="PRENOM"] {
+ background:rgba(0,226,0,0.4);
+ border-color:#2fbbab
+}
+[data-correcttab][data-correcttab="PRENOM"]:after {
+ background:#2fbbab
+}
+[data-correcttab][data-correcttab="ADRESSE"] {
+ background:rgba(0,226,0,0.4);
  border-color:#d45fa3
 }
-[data-entity][data-entity="VRAIE-ADRESSE"]:after {
+[data-correcttab][data-correcttab="ADRESSE"]:after {
  background:#d45fa3
 }
-
-[data-entity][data-entity="FAUX-NOM"] {
- background:rgba(166,226,45,0.2);
- border-color:#a6e22d
-}
-[data-entity][data-entity="FAUX-NOM"]:after {
- background:#a6e22d
-}
-[data-entity][data-entity="FAUX-PRENOM"] {
- background:rgba(47,187,171,0.2);
- border-color:#2fbbab
-}
-[data-entity][data-entity="FAUX-PRENOM"]:after {
- background:#2fbbab
-}
-[data-entity][data-entity="FAUSSE-ADRESSE"] {
- background:rgba(224,0,132,0.2);
+[data-correcttab][data-correcttab="NON REPERÉ"] {
+ background:rgba(0,226,0,0.4);
  border-color:#d45fa3
 }
-[data-entity][data-entity="FAUSSE-ADRESSE"]:after {
+[data-correcttab][data-correcttab="NON REPERÉ"]:after {
  background:#d45fa3
 }
