@@ -79,15 +79,17 @@ Le processus d'annotation requiert de mobiliser des équipes souvent nombreuses 
 
 Afin de constituer un ensemble de documents annotés, il est nécessaire d'utiliser un logiciel d'annotation qui permet d'enregistrer les annotations réalisées par les annotateurs. Il existe de nombreux logiciels d'annotation, dont beaucoup sont open source comme [Doccano](http://doccano.herokuapp.com/).
 
-### La qualité et le volume des données
-
-Le volume de documents annotés nécessaires dépendra de la complexité de la tâche de pseudonymisation, qui sera fonction, entre autres, du nombre de catégories d'entités nommées retenues et de la complexité du langage utilisé dans les documents. Il est en général nécessaire d'**annoter de l'ordre d’un à plusieurs milliers de documents afin d'obtenir des résultats optimaux**. 
+### La qualité des données
 
 La qualité des données est un autre critère essentiel qui sera déterminant pour la performance de l'algorithme. On distinguera la qualité des données textuelles brutes et la qualité des annotations réalisées. 
 
 - La **qualité des données brutes** fait souvent référence à la facilité d'utilisation du format utilisé. En effet, les données textuelles brutes peuvent se présenter sous différents formats, plus ou moins lisibles. Idéalement, les documents textuels sont stockés au format *txt* ou *json*. Des formats moins standards (*doc*, *pdf*, *png*, etc..) nécessiteront des conversions afin de pouvoir être traités. Lorsque les documents sont au format image (car résultant d'une numérisation de documents papiers), la mise en place d'une brique de [reconnaissance optique de caractères](https://fr.wikipedia.org/wiki/Reconnaissance_optique_de_caract%C3%A8res) sera nécessaire afin de les convertir au format texte. La qualité des données brutes est évaluées par les data scientists en amont du projet.
 
-- La **qualité des annotations** fait pour sa part référence à la part de "mauvais labels" : omissions d'entités nommées, attribution de la mauvaise catégorie d'entité à un mot, etc. La phase d'entraînement d'un algorithme d'IA consiste en effet à "mimer" la labélisation qu'on lui présente. De mauvaises annotations vont donc conduire l'algorithme à mal prédire les catégories des mots des nouveaux documents. De plus, une autre partie des données annotées va servir à évaluer la performance de l'algorithme, en comparant les labels prédits par l'algorithme à ceux déterminés "manuellement". **Si les labels issus de l'annotation par des humains ne sont pas fiables, l'évaluation de la performance de l'algorithme ne sera pas fiable.** La qualité des annotations doit de fait être vérifiée par des experts métiers tout au long de la campagne d'annotation.
+- La **qualité des annotations** fait pour sa part référence à la part de "mauvais labels" : omissions d'entités nommées, attribution de la mauvaise catégorie d'entité à un mot, etc. La phase d'entraînement d'un algorithme d'IA consiste en effet à "mimer" la labélisation qu'on lui présente. De mauvaises annotations vont donc conduire l'algorithme à mal prédire les catégories des mots des nouveaux documents. De plus, une autre partie des données annotées va servir à évaluer la performance de l'algorithme, en comparant les labels prédits par l'algorithme à ceux déterminés "manuellement". **Si les labels issus de l'annotation par des humains ne sont pas fiables, l'évaluation de la performance de l'algorithme ne sera pas fiable.** La qualité des annotations doit donc être vérifiée par des experts métiers tout au long de la campagne d'annotation.
+
+### Le volume des données
+
+Le volume de documents annotés nécessaires dépendra de la complexité de la tâche de pseudonymisation, qui sera fonction, entre autres, du nombre de catégories d'entités nommées retenues et de la complexité du langage utilisé dans les documents. Il est en général nécessaire d'**annoter de l'ordre d’un à plusieurs milliers de documents afin d'obtenir des résultats optimaux**.
 
 ### L'accès à des infrastructures de calcul adéquates
 
