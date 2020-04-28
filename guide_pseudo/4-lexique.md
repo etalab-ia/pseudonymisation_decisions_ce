@@ -31,28 +31,37 @@ Le format CoNLL, pour "Conference on Natural Language Learning", est un format g
 En apprentissage automatique, un hyperparamètre est un paramètre qui ne peut pas être appris lors de la phase d'apprentissage de l'algorithme. Par exemple, pour un réseau de neurones profond (voir infra), ce sera à l'utilisateur de fixer à la main le nombre de neurones qu'il souhaite mettre dans son réseau. Il ne s'agit cependant pas d'un choix arbitraire : chaque hyper-paramètre est ensuite optimisé par le data scientist pour sélectionner la valeur qui permet les meilleures performances.
 
 - **Librairie (code)**
+
 En informatique, une librairie, aussi apprelée "bibliothèque de code" ou "package", est un ensemble de code pré-écrit qui peut être facilement importé et réutilisé par un utilisateur pour que celui-ci n'ait besoin de réécrire ces portions de code. Par exemple, la librairie "NLTK" sous Python permet d'utiliser tout un ensemble de méthode pour pré-traiter des données textuelles. Les librairies permettent ainsi un énorme gain de temps en évitant que de nombreux développeurs ne codent des portions de code identiques chacun de leur côté.
 
 - **Modèle de langage**
+
 Un modèle de langage est un modèle qui permet d'associer à chaque mot une représentation sous forme d'un vecteur, aussi appelé embedding. En effet, de tels modèles sont nécessaire puisque les algorithmes d'IA ne savent travailler qu'avec des données numériques. Ces modèles, entrainés sur des millions de documents, ne sont pas spécifique à chaque projet mais ouvent conçus en amont pour être réutilisées par la suite. On pourra par exemple citer [CamemBERT](https://camembert-model.fr/) pour le français.
 
 - **Moteur de règles**
+
 Un moteur de règles est un ensemble de règles prédéfinies "à l'avance". Par exemple, une règle de pseudonymisation pourrait être « si le mot qui suit "Monsieur" ou "Madame" commence par une majuscule alors ce mot est un prénom ». La complexité du langage naturel et la diversité des formulations qui se trouvent dans les documents fait que ce type de moteur de règles a de forte chance de faire beaucoup d'erreurs dans des textes complexes, ou dont la forme varie souvent.
 
 - **Pseudonymisation**
+
 Le [guide de la CNIL sur l'anonymisation des données](https://www.cnil.fr/fr/lanonymisation-des-donnees-un-traitement-cle-pour-lopen-data) définit l'anonymisation comme "un traitement de données personnelles réalisé de manière à ce qu'on ne puisse plus attribuer les données relatives à une personne physique sans avoir recours à des informations supplémentaires. En pratique la pseudonymisation consiste à remplacer les données directement identifiantes (nom, prénom, etc.) d’un jeu de données par des données indirectement identifiantes (alias, numéro dans un classement, etc.)".
 
 - **Reconnaissance d'entités nommées**
+
 La reconnaissance d'entités nommées, où "named entity recognition" (NER) en anglais, est une tâche d'apprentissage supervisée où les données d'entrées sont chacun des mots d'un document et le label qu'on leur attribue est une catégorie sémantique à laquelle il se rattache : par exemple "verbe", "adjectif" ou "adverb"e dans un cas général et "nom", "prénom", "adresse", "date" pour une tâche de pseudonymisation.
 
 - **Reconnaissance optique de caractères**
+
 La reconnaissance optique de caractères, plus connue sous son acronyme anglais "OCR" pour "optical character recognition", désigne le processus de reconnaissance de texte à partir d'images contenant du texte (comme par exemple des scans de lettres dactylographiées ou encore des PDF images) permettant d'extraire ce texte sous un format standard. 
 
 - **Réseaux de neurones profonds**
+
 Les réseaux de neurones profonds, appelé "deep learning" en anglais, désigne des architectures complexes de réseaux de neurones artificiels basés sur de nombreuses couches de neurones successives. Ces réseaux cherche à modéliser des structures sous-jacentes avec un haut niveau d'abstraction pour des tâches complexes, comme la vision par ordinateur ou le traitement du langage naturel.
 
 - **Tokenisation**
+
 En traitement du langage naturel (voir infra), la tokenisation désigne le fait de décomposer un texte sous forme d'éléments unitaires, des "tokens", qui seront ensuite représentés sous forme de vecteurs (voir "Modèle de langage"). La tokenisation la plus répandue consiste simplement à tokeniser une phrase sous forme d'un token par mot.
 
 - **Traitement automatique du langage naturel**
+
 Le traitement automatique du langage naturel (TAL), aussi connu sous l'acronyme NLP pour "Natural Language Processing", désigne le domaine de l'intelligence artificielle qui s'intéresse au texte. Il regroupe plusieurs grands types de tâches, comme la reconnaissance d'entités (voir supra), les agents conversationnels, la classification de documents, le question-answering, etc.
