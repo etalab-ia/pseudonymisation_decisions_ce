@@ -69,29 +69,29 @@ Mais pour que ces modèles puissent arriver à de bonnes performances, ils néce
 
 ## Puis-je utiliser l'intelligence artificielle (IA) pour pseudonymiser ?
 
-### Disposer de données annotées 
+Voici une checklist de prérequis à vérifier avant de vous lancer dans un projet de pseudonymisation par l'IA.
 
-Puisque la tâche de notre IA est de reconnaître la catégorie sémantique de chaque mot, il est nécessaire en amont de tout projet de **disposer "d'exemples" que l'on souhaite montrer à l'algorithme pour qu'il s'entraîne**. Il sera donc nécessaire de constituer au préalable, à la main (humaine), une base d'exemples corrects. **Cette tâche consistant à attribuer des labels à certains mots ou groupes de mots d'un document s'appelle l'annotation**. Cette tâche pourra nécessiter des compétences spécifiques en fonction de la nature des documents et des catégories à annoter.
+### Disposer de données brutes de qualité
+
+La qualité des données brutes (c'est-à-dire telles que reçues, sans aucun traitement) que l'on souhaite utiliser est un premier critère essentiel qui sera déterminant pour la performance de l'algorithme. Cette qualité fait souvent référence à **la facilité d'utilisation du format utilisé**. En effet, les données textuelles brutes peuvent se présenter sous différents formats, plus ou moins lisibles. Idéalement, les documents textuels sont stockés au format *txt* ou *json*. Des formats moins standards (*doc*, *pdf*, *png*, etc..) nécessiteront des conversions afin de pouvoir être traités. Lorsque les documents sont au format image (car résultant d'une numérisation de documents papiers), la mise en place d'une brique de [reconnaissance optique de caractères](https://fr.wikipedia.org/wiki/Reconnaissance_optique_de_caract%C3%A8res) sera nécessaire afin de les convertir au format texte, et complexifie donc le traitement en amont du projet. La qualité des données brutes est évaluées par les data scientists en amont du projet.
+
+### Disposer d'un grand volume des données
+
+Essentiel également, le volume de documents annotés nécessaires dépendra de la complexité de la tâche de pseudonymisation, qui sera fonction, entre autres, du nombre de catégories d'entités nommées retenues et de la complexité du langage utilisé dans les documents. Il est en général nécessaire de disposer de l'ordre de **un à plusieurs milliers de documents afin d'obtenir des résultats optimaux**.
+
+### Avoir la possibilité d'annoter ses données
+
+Puisque la tâche de notre IA consiste à reconnaître la catégorie sémantique de chaque mot, il est nécessaire en amont de tout projet de **disposer "d'exemples" que l'on souhaite montrer à l'algorithme pour qu'il s'entraîne**. Il sera donc nécessaire de constituer au préalable, à la main (humaine), une base d'exemples corrects. **Cette tâche consistant à attribuer des labels à certains mots ou groupes de mots d'un document s'appelle l'annotation**. Cette tâche pourra nécessiter des compétences spécifiques en fonction de la nature des documents et des catégories à annoter.
 
 ::: tip L'annotation, un processus exigeant et chronophage
-Le processus d'annotation requiert de mobiliser des équipes souvent nombreuses (pour aller plus vite) mais aussi qualifiées. Par exemple, si vous cherchez à identifier les noms, prénoms et adresses dans un [recours administratif](https://www.service-public.fr/particuliers/vosdroits/F2474), une simple maîtrise du français suffira. Par contre, si vous cherchez à identifier les moyens et les conclusions juridiques mentionnées, il vous faudra disposer d'une équipe de juristes expérmientés ! Pour des documents complexes, il pourra ainsi être nécessaire de mobiliser longuement des experts métiers pour obtenir une quantité d'annotation suffisante (en quantité) et de qualité (avec le moins de mauvais labels). On parle même de **campagnes d'annotation**!
+Le processus d'annotation requiert de mobiliser des équipes souvent nombreuses (pour aller plus vite) mais aussi qualifiées. Par exemple, si vous cherchez à identifier les noms, prénoms et adresses dans un [recours administratif](https://www.service-public.fr/particuliers/vosdroits/F2474), une simple maîtrise du français suffira. Par contre, si vous cherchez à identifier les moyens et les conclusions juridiques mentionnées, il vous faudra disposer d'une équipe de juristes expérmientés ! Pour des documents complexes, il pourra ainsi être nécessaire de mobiliser longuement des experts métiers pour obtenir une quantité d'annotation suffisante (en quantité) et de qualité (avec le moins de mauvais labels). On parle même de **campagnes d'annotation** !
 :::
+
+L'annotation se devra d'être de qualité pour garantir de bonnes performances de l'algorithme. **Une annotation de mauvaise qualité se caractérise par l'omissions fréquente d'entités nommées, ou l'attribution de la mauvaise catégorie d'entité à des mots**, etc. La phase d'entraînement d'un algorithme d'IA consiste en effet à "mimer" la labélisation qu'on lui présente, et de mauvaises annotations vont logiquement conduire l'algorithme à mal prédire les catégories sémantiques dans de nouveaux documents. De plus, une autre partie des données annotées va servir à évaluer la performance de l'algorithme, en comparant les labels prédits par l'algorithme à ceux déterminés "manuellement". **Si les labels issus de l'annotation par des humains ne sont pas fiables, l'évaluation de la performance de l'algorithme ne sera pas non plus fiable.** La qualité des annotations doit donc être vérifiée par des experts métiers tout au long de la campagne d'annotation.
 
 Afin de constituer un ensemble de documents annotés, il est nécessaire d'utiliser un logiciel d'annotation qui permet d'enregistrer les annotations réalisées par les annotateurs. Il existe de nombreux logiciels d'annotation, dont beaucoup sont open source comme [Doccano](http://doccano.herokuapp.com/).
 
-### La qualité des données
-
-La qualité des données est un autre critère essentiel qui sera déterminant pour la performance de l'algorithme. On distinguera la qualité des données textuelles brutes et la qualité des annotations réalisées. 
-
-- La **qualité des données brutes** fait souvent référence à la facilité d'utilisation du format utilisé. En effet, les données textuelles brutes peuvent se présenter sous différents formats, plus ou moins lisibles. Idéalement, les documents textuels sont stockés au format *txt* ou *json*. Des formats moins standards (*doc*, *pdf*, *png*, etc..) nécessiteront des conversions afin de pouvoir être traités. Lorsque les documents sont au format image (car résultant d'une numérisation de documents papiers), la mise en place d'une brique de [reconnaissance optique de caractères](https://fr.wikipedia.org/wiki/Reconnaissance_optique_de_caract%C3%A8res) sera nécessaire afin de les convertir au format texte. La qualité des données brutes est évaluées par les data scientists en amont du projet.
-
-- La **qualité des annotations** fait pour sa part référence à la part de "mauvais labels" : omissions d'entités nommées, attribution de la mauvaise catégorie d'entité à un mot, etc. La phase d'entraînement d'un algorithme d'IA consiste en effet à "mimer" la labélisation qu'on lui présente. De mauvaises annotations vont donc conduire l'algorithme à mal prédire les catégories des mots des nouveaux documents. De plus, une autre partie des données annotées va servir à évaluer la performance de l'algorithme, en comparant les labels prédits par l'algorithme à ceux déterminés "manuellement". **Si les labels issus de l'annotation par des humains ne sont pas fiables, l'évaluation de la performance de l'algorithme ne sera pas fiable.** La qualité des annotations doit donc être vérifiée par des experts métiers tout au long de la campagne d'annotation.
-
-### Le volume des données
-
-Le volume de documents annotés nécessaires dépendra de la complexité de la tâche de pseudonymisation, qui sera fonction, entre autres, du nombre de catégories d'entités nommées retenues et de la complexité du langage utilisé dans les documents. Il est en général nécessaire d'**annoter de l'ordre d’un à plusieurs milliers de documents afin d'obtenir des résultats optimaux**.
-
-### L'accès à des infrastructures de calcul adéquates
+### Avoir accès à des infrastructures de calcul adéquates
 
 L'apprentissage de modèles de traitement automatique du langage récents, basés sur des réseaux de neurones profonds (deep learning), **nécessite des ressources dédiées et exigeantes**. D'une part, la volumétrie de données nécessaires pour l'entraînement peut mener à la constitution de corpus de plusieurs giga voire teraoctets et peut nécessiter des infrasructures de stockages dédiées, comme des serveurs de stockage. D'autre part, l'entraînement des modèles est pour sa part très gourmand en capacités de calcul, et s'appuie notamment des processeurs graphiques (*GPU* en anglais) qui permettent d'accélérer considérablement le temps de calcul. Même en disposant de GPU de dernières générations, il faut compter plusieurs jours voire plusieurs semaines pour un apprentissage complet du modèle.
 
@@ -99,6 +99,7 @@ En résumé, de nombreuses conditions doivent être remplies avant de se lancer 
 ![alt text](images/Choice_vf.svg "Logo Title Text 1")
 
 ## Ressources externes
+
 - [Guide de l'anonymisation pour les données ouvertes](https://www.cnil.fr/fr/lanonymisation-des-donnees-un-traitement-cle-pour-lopen-data) de la CNIL
 - [Guide RGPD du développeur](https://www.cnil.fr/fr/guide-rgpd-du-developpeur) de la CNIL
 - [Avis sur les techniques d’anonymisation](https://www.cnil.fr/sites/default/files/atoms/files/wp216_fr.pdf) du Groupe de travail du G29 sur la protection des personnes à l'égard du traitement des données à caractère personnel
