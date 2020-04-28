@@ -53,23 +53,25 @@ Lorsque les données à caractère personnel sont contenues dans un jeu de donn�
 
 Lorsque les données à caractère personnel sont contenues dans du texte libre, le ciblage précis des éléments identifiants dans le texte est une tâche souvent complexe. Lorsqu'elle est réalisée par des humains, **cette tâche est coûteuse en temps et peut requérir une expertise spécifique dans la matière traitée** (dans les textes juridiques par exemple). L'intelligence artificielle et les techniques de traitement du langage naturel peuvent permettre d'automatiser cette tâche souvent longue et fastidieuse. 
 
-### Une approche simple : les moteurs de règles
+#### Une méthode automatisation simple : les moteurs de règles
 
-Il existe des méthodes assez intuitives permettant d'automatiser la tâche de pseudonymisation, comme **les moteurs de règles**. Les moteurs de règles sont un ensemble de règles prédéfinies "à l'avance". Par exemple, une règle de pseudonymisation pourrait être "si le mot qui suit Monsieur ou Madame commence par une majuscule alors ce mot est un prénom". La complexité du langage naturel et la diversité des formulations qui se trouvent dans les documents fait que ce type de moteur de règles a de forte chance de faire beaucoup d'erreurs dans des textes administratifs dont la forme varie souvent. 
+Il existe des méthodes assez intuitives permettant d'automatiser la tâche de pseudonymisation, comme **les moteurs de règles**. Les moteurs de règles sont un ensemble de règles prédéfinies "à l'avance". Par exemple, une règle de pseudonymisation pourrait être "si le mot qui suit Monsieur ou Madame commence par une majuscule alors ce mot est un prénom". La complexité du langage naturel et la diversité des formulations qui se trouvent dans les documents fait que ce type de moteur de règles a de forte chance de faire beaucoup d'erreurs dans des textes administratifs dont la forme varie souvent.
 
-### Puis-je utiliser l'intelligence artificielle (IA) pour pseudonymiser ?
+#### Une méthode plus complexe : l'intelligence artificielle
 
 L'utilisation de l'IA pour automatiser la pseudonymisation de documents peut être plus ou moins pertinente. Les solutions d'IA pour pseudonymiser des données textuelles sont en grande majorité des modèles supervisés. **Ces modèles d'IA dits d'apprentissage supervisé se sont beaucoup développés ces dernières années**, en particulier les modèles de réseax de neurones profonds (« deep learning ») qui sont aujourd'hui les plus performants.
 
-Mais pour que ces modèles puissent arriver à de bonnes performances, ils nécessitent un certain nombre de prérequis sont à remplir, que nous détaillons dans les paragraphes de cette section. Assez exigeants, ils sont pourtant indispensable au succès de l'utilisation de l'IA appliquée à la pseudonymisation. 
+Ces modèles supervisés sont des algorithmes qui prennent en entrée des données avec des "labels" (ou étiquettes en français), dont ils vont chercher à "apprendre" la logique d'attribution. L'objectif est ainsi que lorsqu'on leur présente une nouvelle donnée "non-labelisée", l'algorithme soit capable de retrouver seul le bon label. 
 
-#### Disposer de données annotées 
+Dans le cas de la pseudonymisation, les données d'entrées sont **chacun des mots du document à pseudonymiser** et le label qu'on leur attribue est la  **catégorie sémantique** à laquelle il se rattache : nom, prénom, adresse, etc. Ces catégories varient selon la nature du document et le degré de pseudonymisation souhaité. En traitement du langage naturel, ce type de tâche s'appelle la **reconnaissance d'entités nommées** (*Named Entity Recognition (NER)* en anglais). 
 
-Dans le champ de l'apprentissage automatique, les modèles supervisés sont des algorithmes qui prennent en entrée des données avec des "labels" (ou étiquettes en français), dont ils vont chercher à "apprendre" la logique d'attribution. L'objectif est ainsi que lorsqu'on leur présente une nouvelle donnée "non-labelisée", l'algorithme soit capable de retrouver seul le bon label. 
+Mais pour que ces modèles puissent arriver à de bonnes performances, ils nécessitent un certain nombre de prérequis sont à remplir, que nous détaillons dans les paragraphes de cette section. Assez exigeants, ils sont pourtant indispensable au succès de l'utilisation de l'IA appliquée à la pseudonymisation. Nous vous proposons de les passer en revue dans la section suivante.
 
-Dans le cas de la pseudonymisation, les données d'entrées sont **chacun des mots du dosument** et le label qu'on leur attribue et la  **catégorie sémantique** auquel il se rattache : nom, prénom, adresse, etc. Ces catégories varient selon la nature du document et le degré de pseudonymisation souhaité. En traitement du langage naturel, ce type de tâche s'appelle la reconnaissance d'entités nommées (*Named Entity Recognition (NER)* en anglais). 
+## Puis-je utiliser l'intelligence artificielle (IA) pour pseudonymiser ?
 
-Il est donc nécessaire en amont de tout projet de disposer "d'exemples" que l'on souhaite montrer à l'algorithme pour qu'il s'entraîne. Lorsqu'elle est réalisée par un humain, **cette tâche consistant à attribuer des labels à certains mots ou groupes de mots d'un document s'appelle l'annotation**. Cette tâche pourra nécessiter des compétences spécifiques en fonction de la nature des documents et des catégories à annoter.
+### Disposer de données annotées 
+
+Puisque la tâche de notre IA est de reconnaître la catégorie sémantique de chaque mot, il est nécessaire en amont de tout projet de **disposer "d'exemples" que l'on souhaite montrer à l'algorithme pour qu'il s'entraîne**. Il sera donc nécessaire de constituer au préalable, à la main (humaine), une base d'exemples corrects. **Cette tâche consistant à attribuer des labels à certains mots ou groupes de mots d'un document s'appelle l'annotation**. Cette tâche pourra nécessiter des compétences spécifiques en fonction de la nature des documents et des catégories à annoter.
 
 ::: tip L'annotation, un processus exigeant et chronophage
 Le processus d'annotation requiert de mobiliser des équipes souvent nombreuses (pour aller plus vite) mais aussi qualifiées. Par exemple, si vous cherchez à identifier les noms, prénoms et adresses dans un [recours administratif](https://www.service-public.fr/particuliers/vosdroits/F2474), une simple maîtrise du français suffira. Par contre, si vous cherchez à identifier les moyens et les conclusions juridiques mentionnées, il vous faudra disposer d'une équipe de juristes expérmientés ! Pour des documents complexes, il pourra ainsi être nécessaire de mobiliser longuement des experts métiers pour obtenir une quantité d'annotation suffisante (en quantité) et de qualité (avec le moins de mauvais labels). On parle même de **campagnes d'annotation**!
@@ -77,7 +79,7 @@ Le processus d'annotation requiert de mobiliser des équipes souvent nombreuses 
 
 Afin de constituer un ensemble de documents annotés, il est nécessaire d'utiliser un logiciel d'annotation qui permet d'enregistrer les annotations réalisées par les annotateurs. Il existe de nombreux logiciels d'annotation, dont beaucoup sont open source comme [Doccano](http://doccano.herokuapp.com/).
 
-#### La qualité et le volume des données
+### La qualité et le volume des données
 
 Le volume de documents annotés nécessaires dépendra de la complexité de la tâche de pseudonymisation, qui sera fonction, entre autres, du nombre de catégories d'entités nommées retenues et de la complexité du langage utilisé dans les documents. Il est en général nécessaire d'**annoter de l'ordre d’un à plusieurs milliers de documents afin d'obtenir des résultats optimaux**. 
 
@@ -87,7 +89,7 @@ La qualité des données est un autre critère essentiel qui sera déterminant p
 
 - La **qualité des annotations** fait pour sa part référence à la part de "mauvais labels" : omissions d'entités nommées, attribution de la mauvaise catégorie d'entité à un mot, etc. La phase d'entraînement d'un algorithme d'IA consiste en effet à "mimer" la labélisation qu'on lui présente. De mauvaises annotations vont donc conduire l'algorithme à mal prédire les catégories des mots des nouveaux documents. De plus, une autre partie des données annotées va servir à évaluer la performance de l'algorithme, en comparant les labels prédits par l'algorithme à ceux déterminés "manuellement". **Si les labels issus de l'annotation par des humains ne sont pas fiables, l'évaluation de la performance de l'algorithme ne sera pas fiable.** La qualité des annotations doit de fait être vérifiée par des experts métiers tout au long de la campagne d'annotation.
 
-#### L'accès à des infrastructures de calcul adéquates
+### L'accès à des infrastructures de calcul adéquates
 
 L'apprentissage de modèles de traitement automatique du langage récents, basés sur des réseaux de neurones profonds (deep learning), **nécessite des ressources dédiées et exigeantes**. D'une part, la volumétrie de données nécessaires pour l'entraînement peut mener à la constitution de corpus de plusieurs giga voire teraoctets et peut nécessiter des infrasructures de stockages dédiées, comme des serveurs de stockage. D'autre part, l'entraînement des modèles est pour sa part très gourmand en capacités de calcul, et s'appuie notamment des processeurs graphiques (*GPU* en anglais) qui permettent d'accélérer considérablement le temps de calcul. Même en disposant de GPU de dernières générations, il faut compter plusieurs jours voire plusieurs semaines pour un apprentissage complet du modèle.
 
