@@ -180,12 +180,7 @@ def app_page_layout(page_layout,
     )
 
 
-def run_standalone_app(
-        layout,
-        callbacks,
-        header_colors,
-        filename
-):
+def run_standalone_app(layout,callbacks):
     """Run demo app (tests/dashbio_demos/*/app.py) as standalone app."""
     app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
@@ -199,13 +194,19 @@ def run_standalone_app(
 
     app_title = "{}".format(app_name.replace('-', ' ').title())
 
+    header_colors = {
+        'bg_color': '#0055A4',
+        'font_color': 'white'
+        }
+
+
     # Assign layout
     app.layout = app_page_layout(
         page_layout=layout(),
         app_title=app_title,
         app_name=app_name,
         standalone=True,
-        **header_colors()
+        **header_colors
     )
 
     # Register all callbacks

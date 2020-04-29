@@ -1,14 +1,12 @@
 import os
-import base64
 import sys
-from hashlib import md5
 from typing import Dict
 
 import dash_interface.helper
 from dash_interface.components.tab_about import tab_about_content
 from dash_interface.components.tab_errors import tab_errors_content, pane_errors_content, ERROR_PANE_TEXT_STATS, \
     DATASETS_STATS, ERROR_PANE_TAGGED_TEXT
-from dash_interface.components.tab_upload import tab_upload_content
+from dash_interface.components.tab_upload import tab_upload_content, pane_upload_content
 
 sys.path.append("../")
 
@@ -16,22 +14,9 @@ from dash.dependencies import Input, Output, State
 import dash_bootstrap_components as dbc
 import dash_html_components as html
 import dash_core_components as dcc
-from dash_interface.helper import run_standalone_app, tagger
+from dash_interface.helper import run_standalone_app
 
 DATAPATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')
-ERROR_FILE_DICT = []
-
-
-def header_colors():
-    return {
-        'bg_color': '#0055A4',
-        'font_color': 'white'
-    }
-
-
-def description():
-    return "Test d'une application de pseudonimysation pour le Lab IA"
-
 
 def layout():
     """
@@ -93,54 +78,11 @@ def callbacks(_app):
             return None, data
         elif tab_is_at == "tab-errors":
             return pane_errors_content, data
-        if contents is None:
-            return html.Div("Chargez un fichier dans l'onglet données pour le faire apparaitre pseudonymisé ici",
-                            style={"width": "100%", "display": "flex", "align-items": "center",
-                                   "justify-content": "center"}), data
-
-
-
-        file_name, extension = file_name.split(".")
-        temp_path = f"/tmp/output.{extension}"
-        content_type, content_string = contents.split(',')
-
-        content_id = md5(content_string.encode("utf-8")).hexdigest()
-
-        data = data or {content_id: []}
-        if content_id in data and data[content_id]:
-            children = data[content_id]
+        elif tab_is_at == "tab-upload":
+            children, data = pane_upload_content(dash_interface, contents, file_name, data)
             return children, data
-
-        # If we do not have it stored, compute it
-        decoded = base64.b64decode(content_string)
-
-        f = open(temp_path, 'wb')
-        f.write(decoded)
-        f.close()
-        decoded = dash_interface.helper.load_text(temp_path)
-
-        html_pseudoynmized, html_tagged = dash_interface.helper.create_tab_2_html_outputs(text=decoded, tagger=tagger)
-        children = dbc.Container(
-            [
-                html.H4("Document annotée"),
-                dbc.Row([dbc.Col(html.Div(children=html_tagged, id="text-output-tagged", style={"maxHeight": "500px",
-                                                                                                "overflow-y": "scroll"}))],
-                        className="h-50", style={"margin-bottom": "2cm"}),
-
-                html.H4("Document pseudonymisé"),
-                dbc.Row([dbc.Col(html.Div(children=html_pseudoynmized,
-                                          id="text-output-anonym", style={"maxHeight": "500px",
-                                                                          "overflow-y": "scroll"}))],
-                        className="h-50"),
-            ], style={"height": "100vh"}, fluid=True)
-
-        data.clear()
-        data[content_id] = children
-        return children, data
 
 
 if __name__ == '__main__':
-    app = run_standalone_app(layout, callbacks, header_colors, __file__)
-    #
+    app = run_standalone_app(layout, callbacks)
     app.run_server(debug=False, port=8050)
-    pass
