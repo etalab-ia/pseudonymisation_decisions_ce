@@ -1,5 +1,3 @@
-# [EN CONSTRUCTION]
-
 # Introduction
 
 ## A quoi sert ce guide ?
@@ -19,6 +17,7 @@ Ce guide pourra également intéresser d'autres acteurs faisant face à un besoi
 ## Sommaire
 
 Ce guide est composé de trois parties et d'un lexique :
+
 - La [première partie](lien) permet de **découvrir ce qu'est la pseudonymisation, pourquoi elle est utile dans les administrations publiques**, ou encore les méthodes de pseudonymisation existantes.
 - La [deuxième partie](lien) expose une vue d'ensemble de la méthode basée sur l'IA que nous avons développée à Etalab.
 - La [troisième partie](lien) s'adresse à un public plus technique, comme des data scientists, et **présente de manière plus détaillée cette approche basée sur l'IA** pour fournir une compréhension plus précuse de sa mise en œuvre.
@@ -32,4 +31,4 @@ Ce guide est composé de trois parties et d'un lexique :
 
 ## Comment contribuer ?
 
-Ce document est un outil évolutif et ouvert. Vous pouvez contribuer à l'améliorer en proposant une modification [sur Github](https://github.com/etalab-ia/pseudonymisation_decisions_ce) ou en [contactant directement](lab-ia@data.gouv.fr) l'équipe du Lab IA d'Etalab. 
+Ce document est un outil évolutif et ouvert. Vous pouvez contribuer à l'améliorer en proposant une modification [sur GitHub](https://github.com/etalab-ia/pseudonymisation_decisions_ce) ou en [contactant directement](lab-ia@data.gouv.fr) l'équipe du Lab IA d'Etalab. 
