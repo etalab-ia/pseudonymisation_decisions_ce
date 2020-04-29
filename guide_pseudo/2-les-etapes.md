@@ -16,7 +16,7 @@ Les jeux de données d'entraînement et les données de tests sont tous deux con
 
 ### Formater ses données
 
-Un certain nombre d'arbitrages doit être effectués à cette étape, afin de **choisir quels prétraitements vont être appliqués au texte**. Par exemple, dois-je transformer toutes les majuscules en minuscules ? Dois-je conserver la ponctuation ? Et quid des "stop words", ces mots peu porteurs de sens comme "et", "ou", "mais" ? Le but de ces prétraitements est de supprimer l'information inutile, mais d'en conserver assez pour que l'algorithme atteigne son but.
+Certains arbitrages doivent être effectués à cette étape, afin de **choisir quels prétraitements vont être appliqués au texte**. Par exemple, dois-je transformer toutes les majuscules en minuscules ? Dois-je conserver la ponctuation ? Et quid des "stop words", ces mots peu porteurs de sens comme "et", "ou", "mais" ? Le but de ces prétraitements est de supprimer l'information inutile, mais d'en conserver assez pour que l'algorithme atteigne son but.
 
 Une fois le texte prétraité, il est **transformé grâce à un *modèle de langage***, qui permet, pour faire simple, d'obtenir pour chaque mot une représentation sous forme vectorielle. C'est en effet ce type d'input qu'utilisent les algorithmes d'appentissage automatique, et de nombreux modèles de langages peuvent être utilisés en fonction de la tâche ou de la langue, comme par exemple [CamemBERT](https://camembert-model.fr/) pour le français.
 
