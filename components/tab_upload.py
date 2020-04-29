@@ -3,8 +3,11 @@ from hashlib import md5
 import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_html_components as html
+from flair.models import SequenceTagger
 
-from dash_interface.helper import tagger
+from dash_interface.data_ETL import load_text, create_upload_tab_html_output
+
+tagger = SequenceTagger.load('/home/pavel/code/pseudo_conseil_etat/models/flair_embeds/1600_200_200/best-model.pt')
 
 tab_upload_content = dbc.Tab(
     label='Données',
@@ -54,9 +57,9 @@ def pane_upload_content(dash_interface, contents, file_name, data):
         f = open(temp_path, 'wb')
         f.write(decoded)
         f.close()
-        decoded = dash_interface.helper.load_text(temp_path)
+        decoded = load_text(temp_path)
 
-        html_pseudoynmized, html_tagged = dash_interface.helper.create_tab_2_html_outputs(text=decoded, tagger=tagger)
+        html_pseudoynmized, html_tagged = create_upload_tab_html_output(text=decoded, tagger=tagger)
         children = dbc.Container(
             [
                 html.H4("Document annotée"),
