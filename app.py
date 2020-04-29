@@ -1,14 +1,14 @@
-import json
 import os
 import base64
 import sys
 from hashlib import md5
 from typing import Dict
 
-from dash import dash
-
 import dash_interface.helper
-from dash_interface.prepare_data import prepare_error_pane
+from dash_interface.components.tab_about import tab_about_content
+from dash_interface.components.tab_errors import tab_errors_content, pane_errors_content, ERROR_PANE_TEXT_STATS, \
+    DATASETS_STATS, ERROR_PANE_TAGGED_TEXT
+from dash_interface.components.tab_upload import tab_upload_content
 
 sys.path.append("../")
 
@@ -19,7 +19,6 @@ import dash_core_components as dcc
 from dash_interface.helper import run_standalone_app, tagger
 
 DATAPATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')
-ERROR_PANE_TAGGED_TEXT, ERROR_PANE_TEXT_STATS, DATASETS_STATS = prepare_error_pane()
 ERROR_FILE_DICT = []
 
 
@@ -32,79 +31,6 @@ def header_colors():
 
 def description():
     return "Test d'une application de pseudonimysation pour le Lab IA"
-
-
-tab_about_content = dbc.Tab(
-    label='À propos',
-    tab_id="tab-about",
-    children=html.Div(className='page', children=[
-        html.H4(className='what-is', children='Pourquoi un outil de pseudonymization?'),
-        html.P("Le règlement général sur la protection des données (RGPD) n’impose pas aux "
-               "administrations d’anonymiser les documents qu’elles détiennent. Ainsi "
-               "lorsque les "
-               "documents administratifs comportent des données personnelles, ils ne peuvent "
-               "être rendus publics qu'après avoir fait l'objet d'un traitement permettant "
-               "de rendre impossible l'identification de ces personnes."),
-        html.Br(),
-        html.P("Dans l'onglet données vous pouvez charger un fichier afin de le faire "
-               "pseudonimizer par l'algorithme "),
-
-    ])
-)
-
-tab_upload_content = dbc.Tab(
-    label='Données',
-    tab_id="tab-upload",
-    children=html.Div(className='control-tab', children=[
-        html.Div("Veuiller choisir un fichier (type .doc, .docx, .txt. Max 200 Ko)",
-                 className='app-controls-block'),
-
-        html.Div(
-            id='seq-view-fast-upload',
-            children=[
-                dcc.Upload(
-                    id='upload-data',
-                    className='control-upload',
-                    max_size="200000",  # 200 kb
-                    children=html.Div([
-                        "Faire glisser ou cliquer pour charger un fichier"
-                    ]),
-                ),
-            ]
-        ),
-
-    ])
-)
-
-tab_errors_content = dbc.Tab(
-    label='Errors',
-    tab_id="tab-errors",
-    children=html.Div(className='page', children=[
-        html.H4(className='what-is', children="Visualisation d'erreures"),
-        html.P("Mais combien des données j'en ai besoin pour entrainer un modele similaire ?"
-               "Ici on vous montre les differences par rapport a la taille du corpus d'entrainement"),
-        html.Br(),
-
-    ])
-)
-
-pane_errors_content = [
-    html.H5("Choose a model:"),
-    dbc.Container(dcc.Slider(min=80, step=None, max=2400, id="error-slider", marks={80: '80', 160: '160',
-                                         400: '400', 600: '600',
-                                         800: '800', 1200: '1200',
-                                         1600: '1600', 2400: '2400'},
-                             value=80), style={"margin-bottom": "1cm"}),
-    # html.H5("Error display:"),
-    dbc.Container(id="error-pane", style={"maxHeight": "350px", "overflow-y": "scroll", "margin-bottom": "1cm"},
-                  fluid=True),
-    html.H5("Erreures"),
-    dbc.Container(id="errors"),
-    html.H5("Annotations du dataset d'entraînement"),
-    dbc.Container(id="dataset-stats"),
-
-
-]
 
 
 def layout():
@@ -171,6 +97,8 @@ def callbacks(_app):
             return html.Div("Chargez un fichier dans l'onglet données pour le faire apparaitre pseudonymisé ici",
                             style={"width": "100%", "display": "flex", "align-items": "center",
                                    "justify-content": "center"}), data
+
+
 
         file_name, extension = file_name.split(".")
         temp_path = f"/tmp/output.{extension}"
