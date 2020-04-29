@@ -6,13 +6,8 @@ import dash_core_components as dcc
 import dash_html_components as html
 
 
-def app_page_layout(page_layout,
-                    app_title="Dash Etalab App",
-                    app_name="",
-                    light_logo=True,
-                    standalone=False,
-                    bg_color="#506784",
-                    font_color="#F3F6FA"):
+def app_page_layout(page_layout, app_title="Etalab Pseudo", app_name="", light_logo=False, standalone=False,
+                    bg_color="#506784", font_color="#F3F6FA"):
     return html.Div(
         id='main_page',
         children=[
@@ -23,14 +18,12 @@ def app_page_layout(page_layout,
                     html.A(
                         id='dashbio-logo', children=[
                             html.Img(
-                                src="./assets/Data_gouv_fr_logo.svg"
+                                src="./assets/MarianneLogo-3-90x57.png"
 
                             )],
                         href="https://www.etalab.gouv.fr/"
                     ),
-                    html.H2(
-                        app_title
-                    ),
+                    html.H2([app_title, html.Sup("β")], style={"font-family": 'Open Sans', "font-weight": "400"}),
 
                     html.A(
                         id='gh-link',
@@ -58,7 +51,10 @@ def app_page_layout(page_layout,
                 style={
                     'background': bg_color,
                     'color': font_color,
+                    "border-bottom-color": "#eaeaea",
+                    "border-bottom-style": "solid"
                 }
+
             ),
             html.Div(
                 id='app-page-content',
@@ -72,19 +68,20 @@ def run_standalone_app(layout, callbacks):
     """Run demo app (tests/dashbio_demos/*/app.py) as standalone app."""
     app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
+    app.title = "Etalab Pseudo"
     app.scripts.config.serve_locally = True
     # Handle callback to component with id "fullband-switch"
     app.config['suppress_callback_exceptions'] = True
 
     # Get all information from filename
 
-    app_name = "Etalab Pseudonymisation"
+    app_name = "Pseudonymisation Demo"
 
     app_title = "{}".format(app_name.replace('-', ' ').title())
 
     header_colors = {
-        'bg_color': '#0055A4',
-        'font_color': 'white'
+        'bg_color': 'white',
+        'font_color': 'black'
     }
 
     # Assign layout

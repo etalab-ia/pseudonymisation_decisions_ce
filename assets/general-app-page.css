@@ -26,11 +26,13 @@
 }
 
 #app-page-header > a > img {
-    height: 70px;
+    height: 57px;
+    width: 90px;
     float: left;
     padding: 15px;
     padding-bottom: 0px;
     transition-duration: 500ms;
+    vertical-align: middle;
 }
 
 #app-page-header > a > img:hover {
@@ -48,7 +50,10 @@
 }
 
 #dashbio-logo > img {
-    height: 30px !important;
+    width: 90px;
+    vertical-align: middle;
+    horizontal-align: middle;
+    height: 57px;
 }
 
 #app-page-header > img {
