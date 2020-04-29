@@ -1,5 +1,7 @@
 # Les étapes d'un projet de pseudonymisation grâce à l'IA
 
+Nous proposons dans cette partie de passer en revue les différentes étapes d'un projet de pseudonymisation de documents textuels de bout en bout. A ce stade, nous faisons l'hypothèse que l'on dispose déjà de données nettoyées prêtes à l'emploi. Le pré-traitement des données brutes évoqué plus tôt (OCR, conversion en format standard, etc.) n'est pas détaillé ici.
+
 ### Annoter ses données
 
 Nous l'avons vu plus tôt, le premier prérequis pour mener une pseudonymsiation automatique de données textuelles par l'IA est de **disposer de données annotées**, qui serviront "d'exemples" de pseudonymisation correcte à l'algorithme. Si vous ne disposez pas de telles données en l'état, il sera nécessaire que vous les annotiez à la main. **C'est un processus assez long**, surtout si l'on cherche à disposer de plusieurs milliers de documents ! Il faudra donc rassembler deux éléments. Pour commencer, un logiciel d'annotation, comme nous l'avons déjà vu, comme l'outil open source [Doccano](http://doccano.herokuapp.com/). Le second élément : une équipe d'annotateurs dévoués et patients, qui disposent d'une expertise métier adéquate si vous travaillez sur des documents spécifiques, comme par exemple des décisions de justice.
