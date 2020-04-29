@@ -12,7 +12,7 @@ Le [guide de la CNIL sur l'anonymisation des données](https://www.cnil.fr/fr/la
 
 La différence entre anonymisation et pseudonymisation réside ainsi dans le **caractère réversible ou non** de la dissimulation des données à caractère personnel.
 
-::: tip Un exemple de différence pseudonymisation et d'anonymisation
+::: tip Un exemple de différence entre pseudonymisation et anonymisation
 Supposons qu'une caisse d'allocations familiales (CAF) dispose de deux fichiers : l'un avec les adresses des demandeurs d'allocation logement, l'autre avec les montants des allocations versées à chacun d'eux. Dans les deux figurent des informations permettant d'identifier l'individu, par exemple son nom et sa date de naissance. Si la CAF souhaite **anonymiser** ces données, elles supprimera simplement ces noms et dates de naissances. Impossible de savoir qui se cache derrière les adresses ou derrières les allocations reçues, ce qui garantit la protection totale des données personnelles. Mais impossible aussi pour un sociologue d'utiliser ces données pour étudier, par exemple, la répartition géographique des allocations. Si elle souhaite **pseudonymiser** ces données, elle remplacera simplement les noms et dates par un identifiant unique dont elle garde le secret. Mais cela n'empêchera pas un individu mal intentionné d'utiliser des données extérieures pour identifier qui habite à chacune des adresses du premier fichier, et retrouver ensuite qui a reçu des allocations grâce à l'identifiant unique qui lie les deux bases.
 :::
 
@@ -20,7 +20,7 @@ Ainsi, si l'anonymisation seule garantit une totale protection des données à c
 
 ### Pourquoi pseudonymiser des documents administratifs ?
 
-La [loi n°2016-1321 pour une République numérique](https://www.legifrance.gouv.fr/affichLoiPubliee.do?idDocument=JORFDOLE000031589829&type=general&legislature=14) fait de **l’ouverture des données publiques la règle par défaut**. Etalab a d'ailleurs publié [un guide détaillé sur l'ouverture de ces données](https://guides.etalab.gouv.fr/juridique/ouverture/#la-communication-de-vos-documents-administratifs).
+La [loi n°2016-1321 pour une République numérique](https://www.legifrance.gouv.fr/affichLoiPubliee.do?idDocument=JORFDOLE000031589829&type=general&legislature=14) fait de **l’ouverture des données publiques la règle par défaut**. Etalab a par ailleurs publié [un guide détaillé sur l'ouverture de ces données](https://guides.etalab.gouv.fr/juridique/ouverture/#la-communication-de-vos-documents-administratifs).
 
 Lorsque les administrations diffusent dans ce cadre des documents contenant des données personnelles, **l'occultation préalable des éléments à caractère personnel est une obligation légale** qui s’impose à elles en application de l'[article L. 312-1-2](https://www.legifrance.gouv.fr/affichCodeArticle.do?idArticle=LEGIARTI000033205514&cidTexte=LEGITEXT000031366350&dateTexte=20161009)  du Code des relations entre le public et l’administration (CRPA). 
 
@@ -51,7 +51,7 @@ Lorsque les données à caractère personnel sont contenues dans un jeu de donn�
 
 ### Dans le cas où les données à caractère personnel apparaissent dans du texte libre
 
-Lorsque les données à caractère personnel sont contenues dans du texte libre, le ciblage précis des éléments identifiants dans le texte est une tâche souvent complexe. Encore largement réalisée réalisée par des humains, **cette tâche est coûteuse en temps et peut requérir une expertise spécifique dans la matière traitée** (dans les textes juridiques par exemple). L'intelligence artificielle et les techniques de traitement du langage naturel peuvent permettre d'automatiser cette tâche souvent longue et fastidieuse. 
+Lorsque les données à caractère personnel sont contenues dans du texte libre, le ciblage précis des éléments identifiants dans le texte est une tâche souvent complexe. Encore largement réalisée par des humains, **cette tâche est coûteuse en temps et peut requérir une expertise spécifique dans la matière traitée** (dans les textes juridiques par exemple). L'intelligence artificielle et les techniques de traitement du langage naturel peuvent permettre d'automatiser cette tâche souvent longue et fastidieuse. 
 
 #### Une méthode d'automatisation simple : les moteurs de règles
 
@@ -59,7 +59,7 @@ Il existe des méthodes assez intuitives permettant d'automatiser la tâche de p
 
 #### Une méthode plus complexe : l'intelligence artificielle
 
-L'utilisation de l'IA pour automatiser la pseudonymisation de documents peut être plus ou moins pertinente. Les solutions d'IA pour pseudonymiser des données textuelles sont en grande majorité des modèles supervisés. **Ces modèles d'IA dits d'apprentissage supervisé se sont beaucoup développés ces dernières années**, en particulier les modèles de réseax de neurones profonds (« deep learning ») qui sont aujourd'hui les plus performants.
+L'utilisation de l'IA pour automatiser la pseudonymisation de documents peut être plus ou moins pertinente. Les solutions d'IA pour pseudonymiser des données textuelles sont en grande majorité des modèles supervisés. **Ces modèles d'IA dits d'apprentissage supervisé se sont beaucoup développés ces dernières années**, en particulier les modèles de réseaux de neurones profonds (« deep learning ») qui sont aujourd'hui les plus performants.
 
 Ces modèles supervisés sont des algorithmes qui prennent en entrée des données avec des "labels" (ou étiquettes en français), dont ils vont chercher à "apprendre" la logique d'attribution. L'objectif est ainsi que lorsqu'on leur présente une nouvelle donnée "non-labelisée", l'algorithme soit capable de retrouver seul le bon label. 
 
