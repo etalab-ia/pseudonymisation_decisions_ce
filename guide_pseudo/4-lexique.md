@@ -58,6 +58,10 @@ La reconnaissance optique de caractères, plus connue sous son acronyme anglais 
 
 Les réseaux de neurones profonds, appelé "deep learning" en anglais, désigne des architectures complexes de réseaux de neurones artificiels basés sur de nombreuses couches de neurones successives. Ces réseaux cherche à modéliser des structures sous-jacentes avec un haut niveau d'abstraction pour des tâches complexes, comme la vision par ordinateur ou le traitement du langage naturel.
 
+- **Stop word**
+
+Un stop word, ou "mot vide" en français, est un mot très commun et peu porteur de sens seul (on dit qu'ils ne sont pas significatifs). De bons exemple sont ainsi "le", "la", "de", "ou", etc. En traitement automatique du langage naturel, ces mots sont souvent retirés du texte puisqu'ils ne portent que peu d'information du fait de leur présence indistincte dans presques toutes les phrases d'un document.
+
 - **Tokenisation**
 
 En traitement du langage naturel (voir infra), la tokenisation désigne le fait de décomposer un texte sous forme d'éléments unitaires, des "tokens", qui seront ensuite représentés sous forme de vecteurs (voir "Modèle de langage"). La tokenisation la plus répandue consiste simplement à tokeniser une phrase sous forme d'un token par mot.
