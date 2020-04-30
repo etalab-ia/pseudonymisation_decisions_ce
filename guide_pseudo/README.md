@@ -1,3 +1,7 @@
+---
+permalink: /pseudonymisation/
+---
+
 # Introduction
 
 ## A quoi sert ce guide ?
