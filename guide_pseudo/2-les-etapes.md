@@ -10,7 +10,7 @@ L'annotation se devra d'être de qualité pour garantir de bonnes performances d
 
 ### Organiser ses données
 
-Dans le cas de la pseudonymisation, les données sont constituées de l'ensemble des documents (texte libre) desquels il faut occulter des éléments identifiants. On distingue parmi les données **les données d'entraînement, les données de test et les données à labéliser** (qui n'ont pas été annotées à la main).
+Dans le cas de la pseudonymisation, les données sont constituées de l'ensemble des documents (texte libre) desquels il faut occulter des éléments identifiants. Dans un projet d'apprentissage supervisé, on segmente ces données en trois groupes : **les données d'entraînement**, **les données de test** et **les données à labéliser** (qui n'ont pas été annotées à la main).
 
 Les jeux de données d'entraînement et les données de tests sont tous deux constitués de données annotées au préalable par des humains, qui sont comme on vient de le voir indispensables. **Les données d'entraînement vont permettre à l'algorithme d'apprendre à reproduire la tâche de reconnaissance des labels de chacun des mots du texte**. Afin d'évaluer la performance de l'algorithme, il est nécessaire d'utiliser de nouvelles données annotées, que l'algorithme n'a pas "vu" en entraînement. C'est le rôle du jeu de données de test. 
 
