@@ -4,7 +4,7 @@
 
 De nombreuses administrations publiques sont confrontées à des problèmes de pseudonymisation dès lors qu'elles ont à publier des **documents textuels contenant des données à caractère personnel**. Ces documents recouvrent par exemple des décisions de justice, des décisions administratives, des notes, des circulaires, etc.
 
-C'est dans ce cadre qu'Etalab a développé un outil d'intelligence artificielle de pseudonymisation pour le Conseil d'État, qui publie en open data des décisions de justice administrative, [de manière ouverte et mutualisée](https://github.com/etalab-ia/pseudonymisation_decisions_ce).
+C'est dans ce cadre qu'Etalab a développé [un outil d'intelligence artificielle de pseudonymisation](https://github.com/etalab-ia/pseudonymisation_decisions_ce) pour le Conseil d'État, qui publie en open data des décisions de justice administrative. Cet outil est open-source et peut donc être librement réutilisé pour d'autres projets de pseudonymisation.
 
 Pour accompagner la publication de cet outil technique de pseudonymisation, nous avons pensé qu'il était nécessaire de publier également un **guide qui expose ce qu'est la pseudonymisation de documents textuels et la (possible) utilisation de l'intelligence artificielle pour la mettre en œuvre**.
 
