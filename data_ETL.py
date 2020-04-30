@@ -59,13 +59,13 @@ def prepare_upload_tab_html(sentences_tagged, original_text):
 
 def create_upload_tab_html_output(text, tagger, word_tokenizer=None):
     if not word_tokenizer:
-        tokenizer = flair_moses_tokenizer()
+        tokenizer = MOSES_TOKENIZER
 
     text = [t.strip() for t in text.split("\n") if t.strip()]
 
     sentences_tagged = tagger.predict(sentences=text,
                                       mini_batch_size=32,
-                                      embedding_storage_mode="cpu",
+                                      embedding_storage_mode="none",
                                       use_tokenizer=tokenizer,
                                       verbose=True)
 
@@ -173,11 +173,13 @@ def build_moses_tokenizer(tokenizer: MosesTokenizerSpans,
 
     return tokenizer
 
+MOSES_TOKENIZER = build_moses_tokenizer(tokenizer=MosesTokenizerSpans(lang="fr"))
 
-def flair_moses_tokenizer():
-    moses_tokenizer = MosesTokenizerSpans(lang="fr")
-    moses_tokenizer = build_moses_tokenizer(tokenizer=moses_tokenizer)
-    return moses_tokenizer
+
+# def flair_moses_tokenizer():
+#     moses_tokenizer = MosesTokenizerSpans(lang="fr")
+#     moses_tokenizer = build_moses_tokenizer(tokenizer=moses_tokenizer)
+#     return moses_tokenizer
 
 
 def sent_tokenizer(text):
