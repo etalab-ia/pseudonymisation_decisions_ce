@@ -1,3 +1,7 @@
+---
+permalink: /pseudonymisation/pourquoi-comment/
+---
+
 # Pourquoi et comment pseudonymiser dans l'administration ?
 
 ## Qu'est-ce que la pseudonymisation ? 
