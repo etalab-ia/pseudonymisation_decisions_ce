@@ -1,3 +1,7 @@
+---
+permalink: /pseudonymisation/lexique/
+---
+
 # Lexique des termes techniques
 
 Dans cette annexe, nous vous proposons de retrouver les définitions des termes techniques évoqués dans ce guide.
