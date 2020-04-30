@@ -2,12 +2,12 @@ import dash_bootstrap_components as dbc
 import dash_html_components as html
 import dash_core_components as dcc
 
-QUOI = """
+QUOI = dcc.Markdown("""
 La pseudonymisation est un traitement de données personnelles réalisé de manière à ce qu'on ne puisse plus attribuer les
 données relatives à une personne physique sans avoir recours à des informations supplémentaires. 
 En pratique, **la pseudonymisation consiste à remplacer les données directement identifiantes d’un jeu 
 de données par des données indirectement identifiantes**. 
-"""
+""")
 
 POURQUOI = dcc.Markdown("""
 La loi [n°2016-1321](https://www.legifrance.gouv.fr/affichLoiPubliee.do?idDocument=JORFDOLE000031589829&type=general&legislature=14)

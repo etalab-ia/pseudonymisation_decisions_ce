@@ -2,11 +2,9 @@ import os
 import sys
 from typing import Dict
 
-import dash_interface.helper
 from dash_interface.components.tab_about import tab_about_content
-from dash_interface.components.tab_errors import tab_errors_content, pane_errors_content, ERROR_PANE_TEXT_STATS, \
-    DATASETS_STATS, ERROR_PANE_TAGGED_TEXT, pane_errors_content_dynamic
-from dash_interface.components.tab_upload import tab_upload_content, pane_upload_content
+from dash_interface.components.tab_errors import tab_errors_content, pane_errors_content, pane_errors_content_dynamic
+from dash_interface.components.tab_upload import tab_upload_content, pane_upload_content, TEXTE_EXEMPLE
 
 sys.path.append("../")
 
@@ -54,15 +52,16 @@ def callbacks(_app):
                     Output('session-store', 'data')],
                    [Input('upload-data', 'contents'),
                     Input('upload-data', 'filename'),
-                    Input("main-tabs", "active_tab")],
+                    Input("main-tabs", "active_tab"),
+                    Input("exemple-text", "n_clicks")],
                    [State('session-store', 'data')])
-    def pseudo_pane_update(contents, file_name: str, tab_is_at, data: Dict):
+    def pseudo_pane_update(contents, file_name: str, tab_is_at, n_clicks, data: Dict):
         if tab_is_at == "tab-about":
             return None, data
         elif tab_is_at == "tab-errors":
             return pane_errors_content, data
         elif tab_is_at == "tab-upload":
-            children, data = pane_upload_content(contents, file_name, data)
+            children, data = pane_upload_content(contents, file_name, n_clicks, data)
             return children, data
 
 

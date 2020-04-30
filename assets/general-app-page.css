@@ -217,7 +217,7 @@
     width: 150px;
     float: right;
 }
-#app-page-content .control-upload {
+#app-page-content .control-upload    {
     display: block;
     border: dotted 1px #119dff; /* Change in individual app stylesheet */
     border-radius: 5px;
@@ -225,6 +225,15 @@
     font-size: 9pt;
     text-align: center;
 }
+#app-page-content .control-button {
+    display: block;
+    border: dotted 1px #119dff; /* Change in individual app stylesheet */
+    border-radius: 5px;
+    padding: 30px;
+    font-size: 9pt;
+    text-align: center;
+}
+
 #app-page-content .control-download {
     width: 100%;
     margin-top: 10px;
