@@ -46,6 +46,27 @@ pane_errors_content = [
     dbc.Container(id="dataset-stats"),
 
 ]
+
+def pane_errors_content_dynamic(value):
+    dict_values = {80: 0, 160: 1, 400: 2, 600: 3, 800: 4, 1200: 5,
+                       1600: 6, 2400: 7}
+    errors_stats = ERROR_PANE_TEXT_STATS[dict_values[value]]
+    dataset_stats = DATASETS_STATS[dict_values[value]]
+    errors_children = dcc.Markdown(f"""
+        * Nombre d'entités sous-reperées (un nom non trouvée par le modèle): {errors_stats["under_classifications"]}
+        * Nombre d'entités sur-reperées (le nom d'un greffier trouvé par le système): {errors_stats["over_classifications"]}
+        * Nombre d'entités mal reperées (un nom identifié comme un prènom): {errors_stats["miss_classifications"]}
+        * Nombre d'entités bien reperées (un nom bien identifié): {errors_stats["correct_classifications"]}
+        """)
+
+    dataset_errors_children = dcc.Markdown(f"""
+        * Noms annotés : {dataset_stats[1]}
+        * Prènoms annotés : {dataset_stats[2]}
+        * Adresses annotées : {dataset_stats[0]}
+        """)
+    error_text_children = html.Div(ERROR_PANE_TAGGED_TEXT[dict_values[value]])
+    return error_text_children, errors_children, dataset_errors_children
+
 ENTITIES_DICT = {"PER_NOM": "NOM", "PER_PRENOM": "PRENOM", "LOC": "ADRESSE", "O": "NON REPERÉ"}
 TEXT_FILES = "./assets/error_files"
 

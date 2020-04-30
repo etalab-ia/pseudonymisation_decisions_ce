@@ -23,6 +23,8 @@
     height: 60px !important;
     position: absolute;
     top: 0px;
+    border-bottom-color: #eaeaea;
+    border-bottom-style: solid;
 }
 
 #app-page-header > a > img {
@@ -41,8 +43,8 @@
 
 #app-page-header h2 {
     font-size: 22pt;
-    font-family: 'Times';
-    font-weight: 200 !important;
+    font-family: 'Open Sans';
+    font-weight: 700 !important;
     letter-spacing: 1px;
     position: absolute;
     top: -5px;
@@ -54,6 +56,8 @@
     vertical-align: middle;
     horizontal-align: middle;
     height: 57px;
+    margin-bottom: 2cm;
+
 }
 
 #app-page-header > img {
@@ -119,8 +123,8 @@
 #app-page-content .app-body h4.what-is {
     font-weight: 400;
     font-size: 20pt;
-    margin-bottom: 30px;
-    text-align: center;
+    margin-bottom: 5px;
+    text-align: left;
 }
 
 /* Tabs */
@@ -168,6 +172,7 @@
     display: block;
     margin-top: 20px;
     margin-bottom: 40px;
+    text-align: center;
 }
 .app-controls-name {
     display: inline-block;

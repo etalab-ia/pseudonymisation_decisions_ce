@@ -6,8 +6,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 
 
-def app_page_layout(page_layout, app_title="Etalab Pseudo", app_name="", light_logo=False, standalone=False,
-                    bg_color="#506784", font_color="#F3F6FA"):
+def app_page_layout(page_layout, app_title="Etalab Pseudo", light_logo=False):
     return html.Div(
         id='main_page',
         children=[
@@ -23,7 +22,7 @@ def app_page_layout(page_layout, app_title="Etalab Pseudo", app_name="", light_l
                             )],
                         href="https://www.etalab.gouv.fr/"
                     ),
-                    html.H2([app_title, html.Sup("β")], style={"font-family": 'Open Sans', "font-weight": "400"}),
+                    html.H2([app_title, html.Sup("β")]),
 
                     html.A(
                         id='gh-link',
@@ -48,13 +47,6 @@ def app_page_layout(page_layout, app_title="Etalab Pseudo", app_name="", light_l
                         )
                     )
                 ],
-                style={
-                    'background': bg_color,
-                    'color': font_color,
-                    "border-bottom-color": "#eaeaea",
-                    "border-bottom-style": "solid"
-                }
-
             ),
             html.Div(
                 id='app-page-content',
@@ -88,9 +80,6 @@ def run_standalone_app(layout, callbacks):
     app.layout = app_page_layout(
         page_layout=layout(),
         app_title=app_title,
-        app_name=app_name,
-        standalone=True,
-        **header_colors
     )
 
     # Register all callbacks

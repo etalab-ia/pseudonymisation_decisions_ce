@@ -5,7 +5,7 @@ from typing import Dict
 import dash_interface.helper
 from dash_interface.components.tab_about import tab_about_content
 from dash_interface.components.tab_errors import tab_errors_content, pane_errors_content, ERROR_PANE_TEXT_STATS, \
-    DATASETS_STATS, ERROR_PANE_TAGGED_TEXT
+    DATASETS_STATS, ERROR_PANE_TAGGED_TEXT, pane_errors_content_dynamic
 from dash_interface.components.tab_upload import tab_upload_content, pane_upload_content
 
 sys.path.append("../")
@@ -26,15 +26,15 @@ def layout():
     div = html.Div(id='seq-view-body', className='app-body', children=[
         dcc.Store(id='session-store', storage_type='session'),
         html.Div(id='seq-view-control-tabs',
-                 className="four columns div-user-controls",
-                 children=[
+                 className="five columns div-user-controls",
+                 children=dbc.Container(
                      dbc.Tabs(id='main-tabs', children=[
                          tab_about_content,
                          tab_upload_content,
                          tab_errors_content
                      ], active_tab="tab-about"),
-                 ]),
-        dbc.Container(id='right-pane', className="seven columns", fluid=True)
+                 )),
+        dbc.Container(id='right-pane', className="six columns", fluid=True)
     ])
     return div
 
@@ -47,24 +47,8 @@ def callbacks(_app):
                     Output("dataset-stats", 'children')],
                    [Input('error-slider', 'value')])
     def error_slider_update(value):
-        dict_values = {80: 0, 160: 1, 400: 2, 600: 3, 800: 4, 1200: 5,
-                       1600: 6, 2400: 7}
-        errors_stats = ERROR_PANE_TEXT_STATS[dict_values[value]]
-        dataset_stats = DATASETS_STATS[dict_values[value]]
-        errors = dcc.Markdown(f"""
-            * Nombre d'entités sous-reperées (un nom non trouvée par le modèle): {errors_stats["under_classifications"]}
-            * Nombre d'entités sur-reperées (le nom d'un greffier trouvé par le système): {errors_stats["over_classifications"]}
-            * Nombre d'entités mal reperées (un nom identifié comme un prènom): {errors_stats["miss_classifications"]}
-            * Nombre d'entités bien reperées (un nom bien identifié): {errors_stats["correct_classifications"]}
-            """)
-
-        stats_dataset = dcc.Markdown(f"""
-            * Noms annotés : {dataset_stats[1]}
-            * Prènoms annotés : {dataset_stats[2]}
-            * Adresses annotées : {dataset_stats[0]}
-            """)
-
-        return html.Div(ERROR_PANE_TAGGED_TEXT[dict_values[value]]), errors, stats_dataset
+        error_text_children, errors_children, dataset_errors_children = pane_errors_content_dynamic(value)
+        return error_text_children, errors_children, dataset_errors_children
 
     @_app.callback([Output('right-pane', 'children'),
                     Output('session-store', 'data')],
@@ -73,13 +57,12 @@ def callbacks(_app):
                     Input("main-tabs", "active_tab")],
                    [State('session-store', 'data')])
     def pseudo_pane_update(contents, file_name: str, tab_is_at, data: Dict):
-
         if tab_is_at == "tab-about":
             return None, data
         elif tab_is_at == "tab-errors":
             return pane_errors_content, data
         elif tab_is_at == "tab-upload":
-            children, data = pane_upload_content(dash_interface, contents, file_name, data)
+            children, data = pane_upload_content(contents, file_name, data)
             return children, data
 
 

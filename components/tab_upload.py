@@ -13,7 +13,7 @@ tab_upload_content = dbc.Tab(
     label='Données',
     tab_id="tab-upload",
     children=html.Div(className='control-tab', children=[
-        html.Div("Veuiller choisir un fichier (type .doc, .docx, .txt. Max 200 Ko)",
+        html.Div("Veuillez choisir un fichier (type .doc, .docx, .txt. Max 200 Ko)",
                  className='app-controls-block'),
 
         html.Div(
@@ -34,7 +34,7 @@ tab_upload_content = dbc.Tab(
 )
 
 
-def pane_upload_content(dash_interface, contents, file_name, data):
+def pane_upload_content(contents, file_name, data):
     if contents is None:
         return html.Div("Chargez un fichier dans l'onglet données pour le faire apparaitre pseudonymisé ici",
                         style={"width": "100%", "display": "flex", "align-items": "center",
