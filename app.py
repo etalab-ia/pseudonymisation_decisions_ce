@@ -41,12 +41,11 @@ def callbacks(_app):
     """ Define callbacks to be executed on page change"""
 
     @_app.callback([Output("error-pane", 'children'),
-                    Output("errors", 'children'),
-                    Output("dataset-stats", 'children')],
+                    Output("alert-stats", 'children')],
                    [Input('error-slider', 'value')])
     def error_slider_update(value):
-        error_text_children, errors_children, dataset_errors_children = pane_errors_content_dynamic(value)
-        return error_text_children, errors_children, dataset_errors_children
+        error_text_children, caption_children = pane_errors_content_dynamic(value)
+        return error_text_children, caption_children
 
     @_app.callback([Output('right-pane', 'children'),
                     Output('session-store', 'data')],
