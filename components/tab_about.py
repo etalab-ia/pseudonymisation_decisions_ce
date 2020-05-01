@@ -16,6 +16,12 @@ l'occultation préalable des éléments à caractère personnel est [une obligat
 qui s’impose aux administrations.
 Afin de faciliter l'ouverture au grand public, une solution automatisée de pseudonymisation, comme celle-ci, est donc
 souhaitable pour faire face à la grande quantité des documents à traiter dans un temps raisonnable. 
+
+Cette démo, [l'API](http://somelink.ici), et la [guide pseudonymisation](http://www.guides.etalab.gouv.fr)
+(où ous pouvez trouver beaucoup plus d'informations) font partie des outils 
+ mutuaisables du [Lab IA](https://www.etalab.gouv.fr/datasciences-et-intelligence-artificielle)
+[d'Etalab](https://www.etalab.gouv.fr).
+
 """)
 
 COMMENT = dcc.Markdown("""
@@ -31,10 +37,10 @@ ensuite normalement capable de repérer des entités (noms, prènoms, adresses) 
 
 UTILISER = dcc.Markdown("""
 * Vous pouvez uploader un document et ensuite regarder les entités repérées dans le texte ainsi que le texte pseudonymisé
-sur l'onglet **Pseudonymise!**.
-* La quantité des documents annotés à la main a une relation avec la qualité de l'annotation automatique. Trouvez un
-exemple de cette relation dans l'onglet **Combien d'annotations ?**
-* Derrière cette démo tourne une [API ouverte de pseudonymisation](http://somelink.ici). Dans **Stats** nous affichons les statistiques d'utilisation.
+sur l'onglet **Pseudonymise un document**.
+* La quantité des documents annotés à la main a une certaine relation avec la qualité de l'annotation automatique. Trouvez un
+exemple de cette relation dans l'onglet **Volume des données annotées**.
+* Dans **Stats** nous affichons les statistiques d'utilisation de notre API de pseudonymisation.
 """)
 
 PLUSINFO = dcc.Markdown("""
@@ -53,7 +59,5 @@ tab_about_content = dbc.Tab(
         html.P(COMMENT),
         html.H4(className='what-is', children='Utiliser ce demo'),
         html.P(UTILISER),
-        html.H4(className='what-is', children="Plus d'infos"),
-        html.P(PLUSINFO),
     ])
 )
