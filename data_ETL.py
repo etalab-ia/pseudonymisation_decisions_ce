@@ -1,10 +1,13 @@
 import copy
+import glob
 import itertools
 import subprocess
+from pathlib import Path
 from string import ascii_uppercase
 from typing import Callable, List
 
 import dash_html_components as html
+import pandas as pd
 import textract
 from flair.data import Token
 from flair.datasets import ColumnDataset
@@ -197,3 +200,50 @@ def add_positions_to_dataset(dataset: ColumnDataset):
                 token.start_pos = prev_token.end_pos + 1
             token.end_pos = token.start_pos + len(token.text) - (1 if i_tok >= len(sentence.tokens) - 1 else 0)
     pass
+
+
+def prepare_error_decisions(decisions_path: Path):
+    error_files = glob.glob(decisions_path.as_posix() + "/*.txt")
+    dict_df = {}
+    dict_stats = {}
+    for error_file in error_files:
+        df_error = pd.read_csv(error_file, sep="\t", engine="python", skip_blank_lines=False,
+                               names=["token", "true_tag", "pred_tag"]).fillna("")
+        df_no_spaces = df_error[df_error["token"] != ""]
+
+        under_pseudonymization = df_no_spaces[(df_no_spaces["true_tag"] != df_no_spaces["pred_tag"])
+                                              & (df_no_spaces["true_tag"] != "O")]
+        miss_pseudonymization = df_no_spaces[(df_no_spaces["true_tag"] != df_no_spaces["pred_tag"])
+                                             & (df_no_spaces["true_tag"] != "O")
+                                             & (df_no_spaces["pred_tag"] != "O")]
+        over_pseudonymization = df_no_spaces[(df_no_spaces["true_tag"] != df_no_spaces["pred_tag"])
+                                             & (df_no_spaces["true_tag"] == "O")]
+        correct_pseudonymization = df_no_spaces[(df_no_spaces["true_tag"] == df_no_spaces["pred_tag"])
+                                                & (df_no_spaces["true_tag"] != "O")]
+
+        df_error["display_col"] = "O"
+        if not correct_pseudonymization.empty:
+            df_error.loc[correct_pseudonymization.index, "display_col"] = correct_pseudonymization['pred_tag'] + "_C"
+        if not under_pseudonymization.empty:
+            df_error.loc[under_pseudonymization.index, "display_col"] = under_pseudonymization["pred_tag"] + "_E"
+        if not miss_pseudonymization.empty:
+            df_error.loc[miss_pseudonymization.index, "display_col"] = miss_pseudonymization["pred_tag"] + "_E"
+        if not over_pseudonymization.empty:
+            df_error.loc[over_pseudonymization.index, "display_col"] = over_pseudonymization["pred_tag"] + "_E"
+        df_error.loc[df_error["token"] == "", "display_col"] = ""
+
+        # Get simple stats
+        nb_noms = len(df_error[df_error["true_tag"].str.startswith("B-PER_NOM")])
+        nb_prenoms = len(df_error[df_error["true_tag"].str.startswith("B-PER_PRENOM")])
+        nb_loc = len(df_error[df_error["true_tag"].str.startswith("B-LOC")])
+
+        serie_stats = pd.Series({"nb_noms": nb_noms, "nb_prenoms": nb_prenoms, "nb_loc": nb_loc,
+                                 "under_classifications": len(under_pseudonymization),
+                                 "over_classifications": len(over_pseudonymization),
+                                 "miss_classifications": len(miss_pseudonymization),
+                                 "correct_classifications": len(correct_pseudonymization)})
+
+        dict_df[error_file.split("/")[-1]] = df_error.loc[:, ["token", "display_col"]]
+        dict_stats[error_file.split("/")[-1]] = serie_stats
+
+    return dict_df, dict_stats
