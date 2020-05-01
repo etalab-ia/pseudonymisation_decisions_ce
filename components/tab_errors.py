@@ -1,14 +1,11 @@
-import glob
 from pathlib import Path
 
 import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_html_components as html
-import pandas as pd
 from flair.datasets import ColumnDataset
 from pandas import DataFrame
-
-from dash_interface.data_ETL import add_positions_to_dataset
+from dash_interface.data_ETL import add_positions_to_dataset, prepare_error_decisions
 
 ORDERED_FILENAMES = ["80_10_10.results.txt",
                      "160_20_20.results.txt",
@@ -19,39 +16,77 @@ ORDERED_FILENAMES = ["80_10_10.results.txt",
                      "1600_200_200.results.txt",
                      "2400_300_300.results.txt"]
 
-tab_errors_content = dbc.Tab(
-    label='Errors',
-    tab_id="tab-errors",
-    children=html.Div(className='page', children=[
-        html.H4(className='what-is', children="Visualisation d'erreures"),
-        html.P("Mais combien des données j'en ai besoin pour entrainer un modele similaire ?"
-               "Ici on vous montre les differences par rapport a la taille du corpus d'entrainement"),
-        html.Br(),
+VOLUME = [dcc.Markdown(f"""
+La performance d'un modèle de REN dépend de diverses facteurs tels que la qualité et la quantité des données
+d'entraînement : le nombre de documents ainsi que le nombre d'entités annotées. 
+Estimer combien des données à annoter est un premier pas lors du lancement d'une campagne d'annotation.
+Dans ce sens, nous affichons ici un aperçu sur l'impact du volume des données
+d'entrainement par rapport à la pertinence d'un système REN.
 
-    ])
-)
+À droite, nous observons les annotations faites par huit modèles différents sur la même décision de justice.
+Ces modèles varient par rapport à la taille du corpus d'entraînement utilisé.
+
+
+"""),
+
+    html.P(["""Ces annotations se distinguent par trois types de résultats :"""]),
+    html.P(["1. ", html.Mark("Entité bien repérée",  **{"data-correcttab": "PRENOM"}), ": une entité à occulter bien identifiée."]),
+    html.P(["2. ", html.Mark("Entité non-repérée", **{"data-errortab": "NON REPÉRÉ"}), ": une entité à occulter non identifiée par le modèle ;"]),
+    html.P(["3. ", html.Mark("Entité sur-repérée", **{"data-errortab": "PRENOM"}), ": un mot identifié tandis qu'il ne faut pas l'occulter."]),
+    html.Br(),
+    dcc.Markdown("""
+    
+    Si bien la quantité des données d'entraînement nécessaires est très liée à la nature de nos documents et à la qualité de
+    l'annotation, en général, c'est mieux d'avoir le plus des données annotées possibles. Cela dit,
+    il faut considérer l'effort pour les obtenir et l'effet de _rendement décroissant_ après un certain seuil des
+    documents annotés (autour de 800 dans cet exemple).
+        
+    N.B.: ces résultats sont spécifiques à nos données et conditions particulières.
+    Cet exemple a été _cherry-picked_ afin de faciliter la démonstration.
+          """)]
+
 pane_errors_content = [
-    html.H5("Choose a model:"),
-    dbc.Container(dcc.Slider(min=80, step=None, max=2400, id="error-slider", marks={80: '80', 160: '160',
-                                                                                    400: '400', 600: '600',
-                                                                                    800: '800', 1200: '1200',
-                                                                                    1600: '1600', 2400: '2400'},
+    html.H5("Choisissez un modèle"),
+    dbc.Container(dcc.Slider(min=80, step=None, max=2400,
+                             id="error-slider", marks={80: '80', 160: '160', 400: '400', 600: '600',
+                                                       800: '800', 1200: '1200', 1600: '1600', 2400: '2400'},
                              value=80), style={"margin-bottom": "1cm"}),
-    # html.H5("Error display:"),
-    dbc.Container(id="error-pane", style={"maxHeight": "350px", "overflow-y": "scroll", "margin-bottom": "1cm"},
+    dbc.Alert(id="alert-stats", color="secondary", style={"text-align": "center"}),
+    html.H5("Document annoté"),
+
+    dbc.Container(id="error-pane", style={"maxHeight": "750px", "overflow-y": "scroll",
+                                          "margin-bottom": "1cm", "font-family": 'Arial'},
                   fluid=True),
-    html.H5("Erreures"),
-    dbc.Container(id="errors"),
-    html.H5("Annotations du dataset d'entraînement"),
-    dbc.Container(id="dataset-stats"),
+    # html.H5("Erreures"),
+    # dbc.Container(id="errors"),
+    # html.H5("Annotations du dataset d'entraînement"),
+    # dbc.Container(id="dataset-stats"),
 
 ]
+tab_errors_content = dbc.Tab(
+    label='Volume des données annotées',
+    tab_id="tab-errors",
+    children=html.Div(className='page', children=[
+        html.H4(className='what-is', children=""),
+        html.P(VOLUME),
+    ])
+)
+
 
 def pane_errors_content_dynamic(value):
     dict_values = {80: 0, 160: 1, 400: 2, 600: 3, 800: 4, 1200: 5,
-                       1600: 6, 2400: 7}
+                   1600: 6, 2400: 7}
     errors_stats = ERROR_PANE_TEXT_STATS[dict_values[value]]
     dataset_stats = DATASETS_STATS[dict_values[value]]
+    caption_children = [dcc.Markdown(f"Modèle entraîné avec **{value}** documents annotés : "
+                                     f"**{dataset_stats[1]}** noms, **{dataset_stats[2]}** prènoms, "
+                                     f"et **{dataset_stats[0]}** adresses annotées. "
+                                     f"Il produit **{errors_stats['correct_classifications']}** entités bien repérées, "
+                                     f"**{errors_stats['under_classifications']}** entités non-repérées et "
+                                     f"**{errors_stats['over_classifications']}** sur-repérées. "
+                                     )
+                        ]
+
     errors_children = dcc.Markdown(f"""
         * Nombre d'entités sous-reperées (un nom non trouvée par le modèle): {errors_stats["under_classifications"]}
         * Nombre d'entités sur-reperées (le nom d'un greffier trouvé par le système): {errors_stats["over_classifications"]}
@@ -59,63 +94,17 @@ def pane_errors_content_dynamic(value):
         * Nombre d'entités bien reperées (un nom bien identifié): {errors_stats["correct_classifications"]}
         """)
 
-    dataset_errors_children = dcc.Markdown(f"""
+    dataset_stats_children = dcc.Markdown(f"""
         * Noms annotés : {dataset_stats[1]}
         * Prènoms annotés : {dataset_stats[2]}
         * Adresses annotées : {dataset_stats[0]}
         """)
     error_text_children = html.Div(ERROR_PANE_TAGGED_TEXT[dict_values[value]])
-    return error_text_children, errors_children, dataset_errors_children
+    return error_text_children, caption_children
 
-ENTITIES_DICT = {"PER_NOM": "NOM", "PER_PRENOM": "PRENOM", "LOC": "ADRESSE", "O": "NON REPERÉ"}
+
+ENTITIES_DICT = {"PER_NOM": "NOM", "PER_PRENOM": "PRENOM", "LOC": "ADRESSE", "O": "NON REPÉRÉ"}
 TEXT_FILES = "./assets/error_files"
-
-
-def prepare_error_decisions(decisions_path: Path):
-    error_files = glob.glob(decisions_path.as_posix() + "/*.txt")
-    dict_df = {}
-    dict_stats = {}
-    for error_file in error_files:
-        df_error = pd.read_csv(error_file, sep="\t", engine="python", skip_blank_lines=False,
-                               names=["token", "true_tag", "pred_tag"]).fillna("")
-        df_no_spaces = df_error[df_error["token"] != ""]
-
-        under_pseudonymization = df_no_spaces[(df_no_spaces["true_tag"] != df_no_spaces["pred_tag"])
-                                              & (df_no_spaces["true_tag"] != "O")]
-        miss_pseudonymization = df_no_spaces[(df_no_spaces["true_tag"] != df_no_spaces["pred_tag"])
-                                             & (df_no_spaces["true_tag"] != "O")
-                                             & (df_no_spaces["pred_tag"] != "O")]
-        over_pseudonymization = df_no_spaces[(df_no_spaces["true_tag"] != df_no_spaces["pred_tag"])
-                                             & (df_no_spaces["true_tag"] == "O")]
-        correct_pseudonymization = df_no_spaces[(df_no_spaces["true_tag"] == df_no_spaces["pred_tag"])
-                                                & (df_no_spaces["true_tag"] != "O")]
-
-        df_error["display_col"] = "O"
-        if not correct_pseudonymization.empty:
-            df_error.loc[correct_pseudonymization.index, "display_col"] = correct_pseudonymization['pred_tag'] + "_C"
-        if not under_pseudonymization.empty:
-            df_error.loc[under_pseudonymization.index, "display_col"] = under_pseudonymization["pred_tag"] + "_E"
-        if not miss_pseudonymization.empty:
-            df_error.loc[miss_pseudonymization.index, "display_col"] = miss_pseudonymization["pred_tag"] + "_E"
-        if not over_pseudonymization.empty:
-            df_error.loc[over_pseudonymization.index, "display_col"] = over_pseudonymization["pred_tag"] + "_E"
-        df_error.loc[df_error["token"] == "", "display_col"] = ""
-
-        # Get simple stats
-        nb_noms = len(df_error[df_error["true_tag"].str.startswith("B-PER_NOM")])
-        nb_prenoms = len(df_error[df_error["true_tag"].str.startswith("B-PER_PRENOM")])
-        nb_loc = len(df_error[df_error["true_tag"].str.startswith("B-LOC")])
-
-        serie_stats = pd.Series({"nb_noms": nb_noms, "nb_prenoms": nb_prenoms, "nb_loc": nb_loc,
-                                 "under_classifications": len(under_pseudonymization),
-                                 "over_classifications": len(over_pseudonymization),
-                                 "miss_classifications": len(miss_pseudonymization),
-                                 "correct_classifications": len(correct_pseudonymization)})
-
-        dict_df[error_file.split("/")[-1]] = df_error.loc[:, ["token", "display_col"]]
-        dict_stats[error_file.split("/")[-1]] = serie_stats
-
-    return dict_df, dict_stats
 
 
 def generate_errors_tab_html_components(sentences):
