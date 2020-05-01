@@ -83,12 +83,12 @@
 [data-errortab][data-errortab="ADRESSE"]:after {
  background:rgba(153, 54, 87, 0.4)
 }
-[data-errortab][data-errortab="NON REPERÉ"] {
- background:rgba(226,0,0,0.2);
+[data-errortab][data-errortab="NON REPÉRÉ"] {
+ background:rgba(226,0,0,0.6);
  border-color:rgba(153, 54, 87, 0.397)
 }
-[data-errortab][data-errortab="NON REPERÉ"]:after {
- background:rgba(153, 54, 87, 0.4)
+[data-errortab][data-errortab="NON REPÉRÉ"]:after {
+ background:rgba(153, 54, 87, 0.2)
 }
 /* Styles for the correct entities in the errors tab
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -133,10 +133,10 @@
 [data-correcttab][data-correcttab="ADRESSE"]:after {
  background:#d45fa3
 }
-[data-correcttab][data-correcttab="NON REPERÉ"] {
+[data-correcttab][data-correcttab="NON REPÉRÉ"] {
  background:rgba(0,226,0,0.4);
  border-color:#d45fa3
 }
-[data-correcttab][data-correcttab="NON REPERÉ"]:after {
+[data-correcttab][data-correcttab="NON REPÉRÉ"]:after {
  background:#d45fa3
 }
