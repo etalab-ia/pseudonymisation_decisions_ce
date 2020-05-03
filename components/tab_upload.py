@@ -37,11 +37,6 @@ tab_upload_content = dbc.Tab(
 
 
 def pane_upload_content(contents, file_name, n_clicks, data):
-    # if contents is None and n_clicks is None:
-    #     data = data or {"n_clicks": 0}
-    #     return html.Div("Chargez un fichier dans l'onglet données pour le faire apparaitre pseudonymisé ici",
-    #                     style={"width": "100%", "display": "flex", "align-items": "center",
-    #                            "justify-content": "center"}), data
     if n_clicks is not None and n_clicks > data["n_clicks"]:
         decoded = TEXTE_EXEMPLE
         content_id = md5(decoded.encode("utf-8")).hexdigest()
