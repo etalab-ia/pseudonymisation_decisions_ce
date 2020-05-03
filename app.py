@@ -4,7 +4,7 @@ from typing import Dict
 
 from dash_interface.components.tab_about import tab_about_content
 from dash_interface.components.tab_errors import tab_errors_content, pane_errors_content, pane_errors_content_dynamic
-from dash_interface.components.tab_upload import tab_upload_content, pane_upload_content, TEXTE_EXEMPLE
+from dash_interface.components.tab_upload import tab_upload_content, pane_upload_content
 
 sys.path.append("../")
 

@@ -104,7 +104,7 @@ def pane_errors_content_dynamic(value):
 
 
 ENTITIES_DICT = {"PER_NOM": "NOM", "PER_PRENOM": "PRENOM", "LOC": "ADRESSE", "O": "NON REPÉRÉ"}
-TEXT_FILES = "./assets/error_files"
+TEXT_FILES = "./assets/text_files"
 
 
 def generate_errors_tab_html_components(sentences):

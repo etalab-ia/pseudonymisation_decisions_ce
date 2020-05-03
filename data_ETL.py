@@ -47,7 +47,6 @@ def prepare_upload_tab_html(sentences_tagged, original_text):
                 for id_tok in range(len(sent_span.tokens)):
                     sent_span.tokens[id_tok].text = "..."
             else:
-                pass
                 for id_tok, token in enumerate(sent_span.tokens):
                     replacement = pseudo_entity_dict.get(token.text.lower(), pseudos.pop(0))
                     pseudo_entity_dict[token.text.lower()] = replacement
@@ -63,6 +62,8 @@ def prepare_upload_tab_html(sentences_tagged, original_text):
 def create_upload_tab_html_output(text, tagger, word_tokenizer=None):
     if not word_tokenizer:
         tokenizer = MOSES_TOKENIZER
+    else:
+        tokenizer = word_tokenizer
 
     text = [t.strip() for t in text.split("\n") if t.strip()]
 
@@ -199,7 +200,6 @@ def add_positions_to_dataset(dataset: ColumnDataset):
                 prev_token = sentence.tokens[i_tok - 1]
                 token.start_pos = prev_token.end_pos + 1
             token.end_pos = token.start_pos + len(token.text) - (1 if i_tok >= len(sentence.tokens) - 1 else 0)
-    pass
 
 
 def prepare_error_decisions(decisions_path: Path):
