@@ -5,6 +5,7 @@ import subprocess
 from pathlib import Path
 from string import ascii_uppercase
 from typing import Callable, List
+from hashlib import md5
 
 import dash_html_components as html
 import pandas as pd
@@ -12,6 +13,7 @@ import textract
 from flair.data import Token
 from flair.datasets import ColumnDataset
 from sacremoses import MosesTokenizer, MosesDetokenizer, MosesPunctNormalizer
+import requests
 
 
 def prepare_upload_tab_html(sentences_tagged, original_text):
@@ -59,19 +61,47 @@ def prepare_upload_tab_html(sentences_tagged, original_text):
     return html_components_anonym, html_components_tagged
 
 
-def create_upload_tab_html_output(text, tagger, word_tokenizer=None):
-    if not word_tokenizer:
-        tokenizer = MOSES_TOKENIZER
+def create_flair_corpus(conll_tagged: str):
+    text_id = md5(conll_tagged.encode("utf-8")).hexdigest()
+    temp_conll_file = Path(f"/tmp/{text_id}")
+    try:
+        with open(temp_conll_file, "w") as temp_file:
+            temp_file.write(conll_tagged)
+
+        flair_corpus = ColumnDataset(path_to_column_file=temp_conll_file,
+                                     column_name_map={0: 'text', 1: 'ner'})
+        add_span_positions_to_dataset(flair_corpus)
+        return flair_corpus
+    finally:
+        temp_conll_file.unlink()
+
+
+def request_pseudo_api(text: str, pseudo_api_url: str):
+    payload = {"text": text}
+    r = requests.post(pseudo_api_url, payload).json()
+    if r["success"]:
+        return r["conll_tagged_text"]
+
+
+def create_upload_tab_html_output(text, tagger, word_tokenizer=None, pseudo_api_url=None):
+    if pseudo_api_url:
+        conll_tagged = request_pseudo_api(text=text, pseudo_api_url=pseudo_api_url)
+        if not conll_tagged:
+            return None
+        sentences_tagged = create_flair_corpus(conll_tagged)
     else:
-        tokenizer = word_tokenizer
+        if not word_tokenizer:
+            tokenizer = MOSES_TOKENIZER
+        else:
+            tokenizer = word_tokenizer
 
-    text = [t.strip() for t in text.split("\n") if t.strip()]
+        text = [t.strip() for t in text.split("\n") if t.strip()]
 
-    sentences_tagged = tagger.predict(sentences=text,
-                                      mini_batch_size=32,
-                                      embedding_storage_mode="none",
-                                      use_tokenizer=tokenizer,
-                                      verbose=True)
+        sentences_tagged = tagger.predict(sentences=text,
+                                          mini_batch_size=32,
+                                          embedding_storage_mode="none",
+                                          use_tokenizer=tokenizer,
+                                          verbose=True)
 
     html_pseudoynmized, html_tagged = prepare_upload_tab_html(sentences_tagged=sentences_tagged,
                                                               original_text=text)
@@ -177,20 +207,15 @@ def build_moses_tokenizer(tokenizer: MosesTokenizerSpans,
 
     return tokenizer
 
+
 MOSES_TOKENIZER = build_moses_tokenizer(tokenizer=MosesTokenizerSpans(lang="fr"))
-
-
-# def flair_moses_tokenizer():
-#     moses_tokenizer = MosesTokenizerSpans(lang="fr")
-#     moses_tokenizer = build_moses_tokenizer(tokenizer=moses_tokenizer)
-#     return moses_tokenizer
 
 
 def sent_tokenizer(text):
     return text.split("\n")
 
 
-def add_positions_to_dataset(dataset: ColumnDataset):
+def add_span_positions_to_dataset(dataset: ColumnDataset):
     for i_sent, sentence in enumerate(dataset.sentences):
         for i_tok, token in enumerate(sentence.tokens):
             token: Token = token

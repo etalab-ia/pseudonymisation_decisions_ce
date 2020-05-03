@@ -1,4 +1,5 @@
 import base64
+import os
 from hashlib import md5
 import dash_bootstrap_components as dbc
 import dash_core_components as dcc
@@ -6,11 +7,12 @@ import dash_html_components as html
 from flair.models import SequenceTagger
 
 from dash_interface.data_ETL import load_text, create_upload_tab_html_output
+PSEUDO_REST_API_URL = os.environ.get('PSEUDO_REST_API_URL', '')
+TAGGER = SequenceTagger.load('/home/pavel/code/pseudo_conseil_etat/models/flair_embeds/1600_200_200/best-model.pt')
 
 with open("./assets/text_files/upload_example.txt", "r") as example:
     TEXTE_EXEMPLE = example.read()
 
-TAGGER = SequenceTagger.load('/home/pavel/code/pseudo_conseil_etat/models/flair_embeds/1600_200_200/best-model.pt')
 
 tab_upload_content = dbc.Tab(
     label='Pseudonymise un document',
@@ -37,6 +39,8 @@ tab_upload_content = dbc.Tab(
 
 
 def pane_upload_content(contents, file_name, n_clicks, data):
+    # TODO: When using the example and going to another tab, the upload content tab is erased. Reason:
+    # TODO: contents is None so we show the default message (ln ~70)
     if n_clicks is not None and n_clicks > data["n_clicks"]:
         decoded = TEXTE_EXEMPLE
         content_id = md5(decoded.encode("utf-8")).hexdigest()
@@ -70,7 +74,8 @@ def pane_upload_content(contents, file_name, n_clicks, data):
                         style={"width": "100%", "display": "flex", "align-items": "center",
                                "justify-content": "center"}), data
 
-    html_pseudoynmized, html_tagged = create_upload_tab_html_output(text=decoded, tagger=TAGGER)
+    html_pseudoynmized, html_tagged = create_upload_tab_html_output(text=decoded, tagger=TAGGER,
+                                                                    pseudo_api_url=PSEUDO_REST_API_URL)
 
     pseudo_content = dbc.Card(dbc.CardBody(html_pseudoynmized),
                             style={"maxHeight": "750px", "overflow-y": "scroll",

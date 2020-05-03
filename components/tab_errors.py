@@ -5,7 +5,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 from flair.datasets import ColumnDataset
 from pandas import DataFrame
-from dash_interface.data_ETL import add_positions_to_dataset, prepare_error_decisions
+from dash_interface.data_ETL import add_span_positions_to_dataset, prepare_error_decisions
 
 ORDERED_FILENAMES = ["80_10_10.results.txt",
                      "160_20_20.results.txt",
@@ -170,7 +170,7 @@ def prepare_error_pane():
     flair_datasets = []
     for path in files_paths:
         temp_set = ColumnDataset(path_to_column_file=Path(path), column_name_map={0: 'text', 1: 'ner'})
-        add_positions_to_dataset(temp_set)
+        add_span_positions_to_dataset(temp_set)
         flair_datasets.append(temp_set)
 
     html_components = []
