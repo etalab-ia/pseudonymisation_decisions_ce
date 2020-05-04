@@ -7,9 +7,16 @@ import dash_html_components as html
 from flair.models import SequenceTagger
 
 from dash_interface.data_ETL import load_text, create_upload_tab_html_output
-PSEUDO_REST_API_URL = os.environ.get('PSEUDO_REST_API_URL', '')
-TAGGER = SequenceTagger.load('/home/pavel/code/pseudo_conseil_etat/models/flair_embeds/1600_200_200/best-model.pt')
 
+# Env variables
+PSEUDO_REST_API_URL = os.environ.get('PSEUDO_REST_API_URL', '')
+MODEL_PATH = os.environ.get('PSEUDO_MODEL_PATH', '')
+TAGGER = None
+if not PSEUDO_REST_API_URL and not MODEL_PATH:
+    print("Neither the pseudonymization service nor a trained model are available. We cannot continue :(")
+    exit(1)
+elif not PSEUDO_REST_API_URL and MODEL_PATH:
+    TAGGER = SequenceTagger.load(MODEL_PATH)
 with open("./assets/text_files/upload_example.txt", "r") as example:
     TEXTE_EXEMPLE = example.read()
 
@@ -39,13 +46,15 @@ tab_upload_content = dbc.Tab(
 
 
 def pane_upload_content(contents, file_name, n_clicks, data):
-    # TODO: When using the example and going to another tab, the upload content tab is erased. Reason:
-    # TODO: contents is None so we show the default message (ln ~70)
+    # TODO: When uploading, the using the example and then going to another tab, the upload is presented instead of the
+    #  example
+    #  Reason: n_clicks is not > data["nclicks"]
     if n_clicks is not None and n_clicks > data["n_clicks"]:
         decoded = TEXTE_EXEMPLE
         content_id = md5(decoded.encode("utf-8")).hexdigest()
         data = data or {content_id: []}
         data["n_clicks"] = n_clicks
+        data["shown_example"] = True
         if content_id in data and data[content_id]:
             children = data[content_id]
             return children, data
@@ -57,6 +66,10 @@ def pane_upload_content(contents, file_name, n_clicks, data):
         content_id = md5(content_string.encode("utf-8")).hexdigest()
 
         data = data or {content_id: []}
+        # we are not showing the example. Pop it out of the state:
+        if "shown_example" in data:
+            data.pop("shown_example")
+
         if content_id in data and data[content_id]:
             children = data[content_id]
             return children, data
@@ -98,5 +111,6 @@ def pane_upload_content(contents, file_name, n_clicks, data):
         ]
     )
 
-    data = {"n_clicks": data["n_clicks"], content_id: children}
+    # data = {"n_clicks": data["n_clicks"], content_id: children}
+    data.update({content_id: children})
     return children, data
