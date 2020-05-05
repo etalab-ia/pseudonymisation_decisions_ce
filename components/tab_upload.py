@@ -46,17 +46,14 @@ tab_upload_content = dbc.Tab(
 
 
 def pane_upload_content(contents, file_name, n_clicks, data):
-    # TODO: When uploading, the using the example and then going to another tab, the upload is presented instead of the
-    #  example
-    #  Reason: n_clicks is not > data["nclicks"]
     if n_clicks is not None and n_clicks > data["n_clicks"]:
         decoded = TEXTE_EXEMPLE
         content_id = md5(decoded.encode("utf-8")).hexdigest()
         data = data or {content_id: []}
         data["n_clicks"] = n_clicks
-        data["shown_example"] = True
         if content_id in data and data[content_id]:
             children = data[content_id]
+            data.update({content_id: children, "previous_content": children})
             return children, data
     elif contents:
         file_name, extension = file_name.split(".")
@@ -66,10 +63,6 @@ def pane_upload_content(contents, file_name, n_clicks, data):
         content_id = md5(content_string.encode("utf-8")).hexdigest()
 
         data = data or {content_id: []}
-        # we are not showing the example. Pop it out of the state:
-        if "shown_example" in data:
-            data.pop("shown_example")
-
         if content_id in data and data[content_id]:
             children = data[content_id]
             return children, data
@@ -82,7 +75,8 @@ def pane_upload_content(contents, file_name, n_clicks, data):
         f.close()
         decoded = load_text(temp_path)
     else:
-        data = data or {"n_clicks": 0}
+        data.update({"n_clicks": n_clicks or 0})
+
         return html.Div("Chargez un fichier dans l'onglet données pour le faire apparaitre pseudonymisé ici",
                         style={"width": "100%", "display": "flex", "align-items": "center",
                                "justify-content": "center"}), data
@@ -111,6 +105,5 @@ def pane_upload_content(contents, file_name, n_clicks, data):
         ]
     )
 
-    # data = {"n_clicks": data["n_clicks"], content_id: children}
-    data.update({content_id: children})
+    data.update({content_id: children, "previous_content": children})
     return children, data
