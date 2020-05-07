@@ -2,9 +2,9 @@ import os
 import sys
 from typing import Dict
 
-from dash_interface.components.tab_about import tab_about_content
-from dash_interface.components.tab_errors import tab_errors_content, pane_errors_content, pane_errors_content_dynamic
-from dash_interface.components.tab_upload import tab_upload_content, pane_upload_content
+from components.tab_about import tab_about_content
+from components.tab_errors import tab_errors_content, pane_errors_content, pane_errors_content_dynamic
+from components.tab_upload import tab_upload_content, pane_upload_content
 
 sys.path.append("../")
 
@@ -12,7 +12,7 @@ from dash.dependencies import Input, Output, State
 import dash_bootstrap_components as dbc
 import dash_html_components as html
 import dash_core_components as dcc
-from dash_interface.helper import run_standalone_app
+from helper import run_standalone_app
 
 DATAPATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')
 

@@ -5,7 +5,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 from flair.datasets import ColumnDataset
 from pandas import DataFrame
-from dash_interface.data_ETL import add_span_positions_to_dataset, prepare_error_decisions
+from components.data_ETL import add_span_positions_to_dataset, prepare_error_decisions
 
 ORDERED_FILENAMES = ["80_10_10.results.txt",
                      "160_20_20.results.txt",

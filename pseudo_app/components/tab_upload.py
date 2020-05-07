@@ -6,7 +6,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 from flair.models import SequenceTagger
 
-from dash_interface.data_ETL import load_text, create_upload_tab_html_output
+from components.data_ETL import load_text, create_upload_tab_html_output
 
 # Env variables
 PSEUDO_REST_API_URL = os.environ.get('PSEUDO_REST_API_URL', '')
